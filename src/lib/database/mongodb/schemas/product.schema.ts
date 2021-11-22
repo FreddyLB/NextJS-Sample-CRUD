@@ -33,6 +33,15 @@ const ProductShema = new Schema({
   },
 });
 
+// Extensions
+ProductShema.set('toJSON', {
+  transform: (_doc, ret) => {
+    ret.id = ret._id;
+    delete ret._id;
+    delete ret.__v;
+  }
+})
+
 const Product: ProductModel =
   Mongoose.models.Product ||
   model<ProductDocument, ProductModel>("Product", ProductShema);

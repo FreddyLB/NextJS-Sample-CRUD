@@ -4,7 +4,7 @@ import { NextApiRequest } from "next";
 import { PaginationOptions, SortDirection } from "./base/repository";
 
 // prettier-ignore
-export function getPagination<TEntity>(req: NextApiRequest) : PaginationOptions<TEntity> {
+export function buildPaginationOptions<TEntity>(req: NextApiRequest) : PaginationOptions<TEntity> {
   const { page, pageSize, sort, sortAscending, sortDescending } = req.query;
   const sorting: Record<string, SortDirection> = {};
 

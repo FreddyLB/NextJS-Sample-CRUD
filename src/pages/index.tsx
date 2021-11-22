@@ -1,29 +1,35 @@
-import { Container } from "@mui/material";
-import type { InferGetServerSidePropsType } from "next";
+import { PageResult } from "@lib/repositories/base/repository";
+import { Container, Typography } from "@mui/material";
+import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import ProductTable from "src/components/ProductTable";
 import { IProduct } from "src/shared/models/product.model";
 
 const API_URL = "http://localhost:3000/api/products";
 
-async function getServerSideProps() {
+type Data = {
+  data: PageResult<IProduct>;
+};
+
+export const getServerSideProps: GetServerSideProps<Data> = async () => {
   const res = await fetch(API_URL);
-  const data = (await res.json()) as IProduct[];
-  console.log("Res: " + res);
+  const data = await res.json();
 
   return {
-    props: {
-      data,
-    },
+    props: { data },
   };
-}
+};
 
 function Home({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log(data);
+  const result = data.data;
+
   return (
-    <Container style={{ padding: "60px" }}>
-      <ProductTable items={data || []} />;
+    <Container style={{ padding: "60px 20px" }}>
+      <Typography variant="h1" sx={{ fontFamily: "monospace", fontSize: 50 }}>
+        Products
+      </Typography>
+      <ProductTable items={result} />
     </Container>
   );
 }

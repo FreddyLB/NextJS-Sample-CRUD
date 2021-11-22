@@ -4,7 +4,7 @@ import {
   PaginationOptions,
   SortDirection,
 } from "./repository";
-import { Model, Document, FilterQuery } from "mongoose";
+import { Model, Document, FilterQuery, HydratedDocument } from "mongoose";
 import { ValidationError } from "@lib/utils/errors";
 
 const DEFAULT_MAX_PAGE_SIZE = 10;
@@ -97,7 +97,7 @@ export class MongoRepository<
 
     for (const key in entity) {
       if (entity.hasOwnProperty(key)) {
-        const value = (entity as any)[key];
+        const value = entity[key];
 
         if (value !== undefined) {
           (entityToUpdate as any)[key] = value;
@@ -105,6 +105,7 @@ export class MongoRepository<
       }
     }
 
+    await entityToUpdate.save();
     return entityToUpdate;
   }
 

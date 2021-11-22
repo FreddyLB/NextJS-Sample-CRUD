@@ -1,174 +1,155 @@
+import { mongodb } from "@lib/database/mongodb/middleware";
 import { IRepository, PageResult } from "@lib/repositories/base/repository";
-import { getPagination } from "@lib/repositories/helper";
-import { isPromise } from "@lib/utils/isPromise";
+import { buildPaginationOptions } from "@lib/repositories/helper";
+import morgan from "morgan";
 import { NextApiRequest, NextApiResponse } from "next";
-import { ErrorHandler, NextConnect, RequestHandler } from "next-connect";
-
-import withRoutes from "./withRoutes";
+import { ErrorHandler, RequestHandler } from "next-connect";
+import withApiRoutes, {
+  RouteController,
+  NextApiRequestWithParams,
+  NextConnectRoute,
+} from "./withApiRoutes";
 
 const DEFAULT_BASE_PATH = "/api";
+const DEFAULT_ID_NAME = "id";
 
-type NextApiRequestWithParams = NextApiRequest & {
-  params: Record<string, string>;
-};
-
-type RestEndpoint<TEntity, TKey, TReturn> = (
-  repository: IRepository<TEntity, TKey>,
+type RestEndpoint<
+  TRepo extends IRepository<TEntity, TKey>,
+  TEntity,
+  TKey,
+  TReturn
+> = (
+  repository: TRepo,
   req: NextApiRequestWithParams,
   res: NextApiResponse
 ) => Promise<TReturn> | TReturn;
 
-type RouteRestEndPoint<T, TKey> = Record<string, RestEndpoint<T, TKey, any>>;
+type RouteRestEndPoint<TRepo extends IRepository<T, TKey>, T, TKey> = Record<
+  string,
+  RestEndpoint<TRepo, T, TKey, any>
+>;
 
 type ApiRouter = (
   path: string,
   handler: RequestHandler<NextApiRequestWithParams, NextApiResponse>
 ) => Promise<any> | any;
 
-export interface CrudConfig<T, TKey> {
+export interface NamingConventions {
+  id?: string;
+}
+
+export interface RestApiConfig<TRepo extends IRepository<T, TKey>, T, TKey> {
   route: string;
   baseRoute?: string;
-  customEndpoints?: CustomApiEndpoints<T, TKey>;
+  namingConventions?: NamingConventions;
+  customEndpoints?: CustomApiEndpoints<TRepo, T, TKey>;
   onError?: ErrorHandler<NextApiRequest, NextApiResponse>;
-  getAll?: RestEndpoint<T, TKey, PageResult<T>> | null;
-  getById?: RestEndpoint<T, TKey, T> | null;
-  create?: RestEndpoint<T, TKey, T> | null;
-  update?: RestEndpoint<T, TKey, T> | null;
-  delete?: RestEndpoint<T, TKey, T> | null;
+  getAll?: RestEndpoint<TRepo, T, TKey, PageResult<T>> | null;
+  getById?: RestEndpoint<TRepo, T, TKey, T | null> | null;
+  create?: RestEndpoint<TRepo, T, TKey, T> | null;
+  update?: RestEndpoint<TRepo, T, TKey, T> | null;
+  delete?: RestEndpoint<TRepo, T, TKey, T> | null;
 }
 
-export interface CustomApiEndpoints<T, TKey> {
-  get?: RouteRestEndPoint<T, TKey>;
-  post?: RouteRestEndPoint<T, TKey>;
-  put?: RouteRestEndPoint<T, TKey>;
-  delete?: RouteRestEndPoint<T, TKey>;
-  patch?: RouteRestEndPoint<T, TKey>;
-  options?: RouteRestEndPoint<T, TKey>;
-  all?: RouteRestEndPoint<T, TKey>;
+export interface CustomApiEndpoints<
+  TRepo extends IRepository<T, TKey>,
+  T,
+  TKey
+> {
+  get?: RouteRestEndPoint<TRepo, T, TKey>;
+  post?: RouteRestEndPoint<TRepo, T, TKey>;
+  put?: RouteRestEndPoint<TRepo, T, TKey>;
+  delete?: RouteRestEndPoint<TRepo, T, TKey>;
+  patch?: RouteRestEndPoint<TRepo, T, TKey>;
+  options?: RouteRestEndPoint<TRepo, T, TKey>;
+  trace?: RouteRestEndPoint<TRepo, T, TKey>;
+  head?: RouteRestEndPoint<TRepo, T, TKey>;
+  all?: RouteRestEndPoint<TRepo, T, TKey>;
 }
 
-export function withRestApi<
-  TEntity,
-  TKey,
-  TRepo extends IRepository<TEntity, TKey>
->(repository: TRepo, config: CrudConfig<TEntity, TKey>) {
+// prettier-ignore
+export function withRestApi<TEntity, TKey, TRepo extends IRepository<TEntity, TKey>>(
+  repository: TRepo,
+  config: RestApiConfig<TRepo, TEntity, TKey>
+) {
   config.customEndpoints = config.customEndpoints || {};
+  config.namingConventions = config.namingConventions || {};
+  config.namingConventions.id = config.namingConventions.id || DEFAULT_ID_NAME;
+
   const basePath = config.baseRoute || DEFAULT_BASE_PATH;
 
   validateRoutePath(basePath);
   validateRoutePath(config.route);
 
   const path = `${basePath}${config.route}`;
-  let router = withRoutes({ attachParams: true, onError: config.onError });
+  const controller = withApiRoutes<NextApiRequestWithParams, NextApiResponse>({ onError: config.onError })
+    .use(mongodb())
+    .use(morgan("dev"));
 
-  // First set custom routes
-  setupCustomRoutes(config, router, path, repository);
+  // Configure custom endpoints
+  for (const method in config.customEndpoints) {
+    const endpoint = config.customEndpoints[method as keyof CustomApiEndpoints<TRepo, TEntity, TKey>];
+
+    if (endpoint) {
+      for (const route in endpoint) {
+        validateRoutePath(route);
+        const restEndpoint = endpoint[route as keyof RouteRestEndPoint<TRepo, TEntity, TKey>];
+
+        if (restEndpoint != null) {
+          const onRoute = controller[method as keyof RouteController<any, any>] as NextConnectRoute<any, any>;
+
+          if (onRoute != null) {
+            onRoute(`${path}${route}`, (req, res) => restEndpoint(repository, req, res));
+          }
+        }
+      }
+    }
+  }
 
   // GetAll
   if (config.getAll !== null) {
     const handler = config.getAll! || getAllEndpoint();
-    router.get(path, (req, res) => handler(repository, req, res));
+    controller.get(path, (req, res) => handler(repository, req, res));
   }
 
   // GetById
   if (config.getById !== null) {
     const handler = config.getById! || getByIdEndpoint();
-    router.get(path + `/:id`, (req, res) => handler(repository, req, res));
+    controller.get(`${path}/:id`, (req, res) => handler(repository, req, res));
   }
 
   // Create
   if (config.create !== null) {
-    const handler = config.create! || createEndpoint();
-    router.post(path, (req, res) => handler(repository, req, res));
+    const handler = config.create! || createEndpoint(config);
+    controller.post(path, (req, res) => handler(repository, req, res));
   }
 
   // Update
   if (config.update !== null) {
     const handler = config.update! || updateEndpoint();
-    router.put(path + `/:id`, (req, res) => handler(repository, req, res));
+    controller.put(`${path}/:id`, (req, res) => handler(repository, req, res));
   }
 
   // Delete
   if (config.delete !== null) {
     const handler = config.delete! || deleteEndpoint();
-    router.delete(path + `/:id`, (req, res) => handler(repository, req, res));
+    controller.delete(`${path}/:id`, (req, res) => handler(repository, req, res));
   }
 
-  return router;
+  return controller;
 }
 
-function setupCustomRoutes(
-  config: CrudConfig<any, any>,
-  router: NextConnect<NextApiRequestWithParams, NextApiResponse<any>>,
-  path: string,
-  repository: IRepository<any, any>
-) {
-  const validMethods = [
-    "get",
-    "post",
-    "put",
-    "delete",
-    "patch",
-    "options",
-    "all",
-  ];
-
-  for (const method in config.customEndpoints) {
-    if (!validMethods.includes(method)) {
-      throw new Error(`Invalid method: '${method}'`);
-    }
-
-    const key = method as keyof CustomApiEndpoints<any, any>;
-    const routes = config.customEndpoints[key];
-
-    if (routes != null) {
-      for (const route in routes) {
-        const endpoint = routes[route];
-
-        if (endpoint != null) {
-          let routeHandler: ApiRouter;
-
-          switch (method) {
-            case "get":
-              routeHandler = router.get;
-              break;
-            case "post":
-              routeHandler = router.post;
-              break;
-            case "put":
-              routeHandler = router.put;
-              break;
-            case "delete":
-              routeHandler = router.delete;
-              break;
-            case "patch":
-              routeHandler = router.patch;
-              break;
-            case "options":
-              routeHandler = router.options;
-              break;
-            case "all":
-              routeHandler = router.all;
-              break;
-          }
-
-          const routePath = `${path}${route}`;
-          setRouteHandler(routePath, repository, endpoint, routeHandler!);
-        }
-      }
-    }
-  }
-}
-
-function getAllEndpoint<T, TKey>(): RestEndpoint<T, TKey, void> {
+// prettier-ignore
+function getAllEndpoint<TRepo extends IRepository<T, TKey>, T, TKey>(): RestEndpoint<TRepo, T, TKey, void> {
   return async (repo, req, res) => {
-    const pagination = getPagination(req);
-    const result = await repo.findWithPagination(pagination);
+    const options = buildPaginationOptions(req);
+    const result = await repo.findWithPagination(options);
     return res.json(result);
   };
 }
 
-function getByIdEndpoint<T, TKey>(): RestEndpoint<T, TKey, void> {
+// prettier-ignore
+function getByIdEndpoint<TRepo extends IRepository<T, TKey>, T, TKey>(): RestEndpoint<TRepo, T, TKey, void> {
   return async (repo, req, res) => {
     const params = req.params || {};
     const id = getEntityId(params.id) as unknown as TKey;
@@ -177,14 +158,18 @@ function getByIdEndpoint<T, TKey>(): RestEndpoint<T, TKey, void> {
   };
 }
 
-function createEndpoint<T, TKey>(): RestEndpoint<T, TKey, void> {
+// prettier-ignore
+function createEndpoint<TRepo extends IRepository<T, TKey>, T, TKey>(config: RestApiConfig<TRepo, T, TKey>): RestEndpoint<TRepo, T, TKey, void> {
   return async (repo, req, res) => {
     const result = await repo.create(req.body);
-    return res.json(result);
+    const id = config.namingConventions!.id as keyof T;
+    res.setHeader("Location", `${req.url}/${result[id]}`);
+    return res.status(201).json(result);
   };
 }
 
-function updateEndpoint<T, TKey>(): RestEndpoint<T, TKey, void> {
+// prettier-ignore
+function updateEndpoint<TRepo extends IRepository<T, TKey>, T, TKey>(): RestEndpoint<TRepo, T, TKey, void> {
   return async (repo, req, res) => {
     const params = req.params || {};
     const id = getEntityId(params.id) as unknown as TKey;
@@ -194,42 +179,14 @@ function updateEndpoint<T, TKey>(): RestEndpoint<T, TKey, void> {
   };
 }
 
-function deleteEndpoint<T, TKey>(): RestEndpoint<T, TKey, void> {
+// prettier-ignore
+function deleteEndpoint<TRepo extends IRepository<T, TKey>, T, TKey>(): RestEndpoint<TRepo, T, TKey, void> {
   return async (repo, req, res) => {
     const params = req.params || {};
     const id = getEntityId(params.id) as unknown as TKey;
     const result = await repo.delete(id);
     return res.json(result);
   };
-}
-
-function setRouteHandler(
-  path: string,
-  repository: IRepository<any, any>,
-  endpoint: RestEndpoint<any, any, any>,
-  router: ApiRouter
-) {
-  router(path, async (req, res) => {
-    let result = endpoint(repository, req, res);
-
-    if (isPromise(result)) {
-      result = await result;
-    }
-
-    if (result === null) {
-      res.status(404);
-    }
-
-    if (result != null) {
-      if (typeof result === "object") {
-        res.status(200).json(result);
-      } else {
-        res.status(200).send(result);
-      }
-    }
-
-    res.end();
-  });
 }
 
 function validateRoutePath(path: string) {
