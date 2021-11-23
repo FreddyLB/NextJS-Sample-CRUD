@@ -4,16 +4,16 @@ import {
   PaginationOptions,
   SortDirection,
 } from "./repository";
-import { Model, Document, FilterQuery, HydratedDocument } from "mongoose";
+import { Model, Document, FilterQuery } from "mongoose";
 import { ValidationError } from "@lib/utils/errors";
 
 const DEFAULT_MAX_PAGE_SIZE = 10;
 const NO_FOUND_ERROR_MESSAGE = "Resourse not found";
 
-export class MongoRepository<
+export abstract class MongoRepository<
   TEntity extends Document,
   TModel extends Model<TEntity>
-> implements IRepository<TEntity, string>
+> implements IRepository<TEntity>
 {
   constructor(protected readonly model: TModel) {}
 
@@ -47,7 +47,8 @@ export class MongoRepository<
       .find(query)
       .sort(sorting)
       .skip((currentPage - 1) * pageSize)
-      .limit(pageSize);
+      .limit(pageSize)
+      .exec();
 
     return pageData({
       currentPage,
@@ -89,6 +90,22 @@ export class MongoRepository<
   }
 
   async update(id: string, entity: Partial<TEntity>): Promise<TEntity> {
+    let entityToUpdate = await this.model.findById(id);
+
+    if (!entityToUpdate) {
+      throw new ValidationError(NO_FOUND_ERROR_MESSAGE);
+    }
+
+    entityToUpdate = {
+      ...entityToUpdate,
+      ...entity,
+    };
+
+    entityToUpdate.save();
+    return entityToUpdate;
+  }
+
+  async partialUpdate(id: string, entity: Partial<TEntity>): Promise<TEntity> {
     const entityToUpdate = await this.model.findById(id);
 
     if (!entityToUpdate) {
@@ -96,16 +113,14 @@ export class MongoRepository<
     }
 
     for (const key in entity) {
-      if (entity.hasOwnProperty(key)) {
-        const value = entity[key];
+      const value = entity[key];
 
-        if (value !== undefined) {
-          (entityToUpdate as any)[key] = value;
-        }
+      if (value !== undefined) {
+        (entityToUpdate as Partial<TEntity>)[key] = value;
       }
     }
 
-    await entityToUpdate.save();
+    entityToUpdate.save();
     return entityToUpdate;
   }
 
@@ -118,6 +133,47 @@ export class MongoRepository<
 
     await entityToDelete.remove();
     return entityToDelete;
+  }
+
+  // prettier-ignore
+  protected async findWithQuery(options: PaginationOptions<TEntity>): Promise<PageResult<TEntity>> {
+    const currentPage = Math.max(1, options.page || 1);
+    const pageSize = Math.max(1, options.pageSize || DEFAULT_MAX_PAGE_SIZE);
+    const query = (options.query || {}) as FilterQuery<TEntity>;
+    const count = await this.model.countDocuments(query);
+    const totalPages = Math.ceil(count / pageSize);
+
+    let sorting = options.sorting || {};
+
+    if (Object.entries(sorting).length === 0) {
+      sorting = { _id: SortDirection.Descending };
+    }
+
+    // Quick path
+    if (currentPage > totalPages) {
+      return pageData({
+        currentPage,
+        totalPages,
+        pageSize,
+        totalItems: count,
+        data: [],
+      });
+    }
+
+    const data = await this.model
+      .find(query)
+      .sort(sorting)
+      .skip((currentPage - 1) * pageSize)
+      .limit(pageSize)
+      .exec();
+
+    return pageData({
+      currentPage,
+      totalPages,
+      pageSize,
+      totalItems: count,
+      data,
+    });
   }
 }
 
