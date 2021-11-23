@@ -1,5 +1,5 @@
 
-import { ArrayUtils } from "@lib/utils/ArrayUtils";
+import { ArrayUtils } from "@server/utils/ArrayUtils";
 import { NextApiRequest } from "next";
 import { PaginationOptions, SortDirection } from "./base/repository";
 

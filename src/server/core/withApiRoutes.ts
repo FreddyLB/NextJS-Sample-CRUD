@@ -1,11 +1,11 @@
-import isPromise from "@lib/utils/isPromise";
+import isPromise from "@server/utils/isPromise";
 import nextConnect, {
   ErrorHandler,
   Middleware,
   NextHandler,
   RequestHandler,
 } from "next-connect";
-import { ValidationError } from "@lib/utils/errors";
+import { ValidationError } from "@server/utils/errors";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export type RequestParams = {

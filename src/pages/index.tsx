@@ -1,4 +1,4 @@
-import { PageResult } from "@lib/repositories/base/repository";
+import { PageResult } from "@server/repositories/base/repository";
 import { Container, Typography } from "@mui/material";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import ProductTable from "src/components/ProductTable";

@@ -5,7 +5,7 @@ import {
   SortDirection,
 } from "./repository";
 import { Model, Document, FilterQuery } from "mongoose";
-import { ValidationError } from "@lib/utils/errors";
+import { ValidationError } from "@server/utils/errors";
 
 const DEFAULT_MAX_PAGE_SIZE = 10;
 const NO_FOUND_ERROR_MESSAGE = "Resourse not found";

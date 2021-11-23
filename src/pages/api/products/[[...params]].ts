@@ -1,5 +1,5 @@
-import { withRestApi } from "@lib/core/withRestApi";
-import { ProductRepository } from "@lib/repositories/product.repository";
+import { withRestApi } from "@server/core/withRestApi";
+import { ProductRepository } from "@server/repositories/product.repository";
 
 export default withRestApi(new ProductRepository(), {
   route: "/products",
