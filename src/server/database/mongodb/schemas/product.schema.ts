@@ -12,6 +12,10 @@ const ProductShema = new Schema({
     type: String,
     trim: true,
   },
+  imageUrl: {
+    type: String,
+    trim: true,
+  },
   color: {
     type: String,
     required: true,
@@ -19,7 +23,7 @@ const ProductShema = new Schema({
   price: {
     type: Number,
     required: true,
-    min: 0.01,
+    validate: (value: number) => value > 0,
   },
   createdAt: {
     type: Date,
