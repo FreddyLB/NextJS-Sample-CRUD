@@ -1,6 +1,6 @@
 import { PageResult } from "@lib/repositories/base/repository";
 import { Container, Typography } from "@mui/material";
-import type { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import ProductTable from "src/components/ProductTable";
 import { IProduct } from "src/shared/models/product.model";
 
@@ -26,7 +26,10 @@ function Home({
 
   return (
     <Container style={{ padding: "60px 20px" }}>
-      <Typography variant="h1" sx={{ fontFamily: "monospace", fontSize: 50 }}>
+      <Typography
+        variant="h1"
+        sx={{ fontFamily: "monospace", fontSize: 30, marginBottom: 2 }}
+      >
         Products
       </Typography>
       <ProductTable items={result} />

@@ -14,18 +14,20 @@ import {
 } from "@mui/material";
 import { IProduct } from "src/shared/models/product.model";
 import { MUIStyledCommonProps } from "@mui/system";
+import { useConfirmDialog } from "src/context/ConfirmDialogContext";
 
 const StyledTableCell = styled(TableCell)(
   ({ theme }: MUIStyledCommonProps) => ({
-    fontSize: 20,
+    fontSize: 16,
     fontFamily: "monospace",
+    padding: 10,
     whiteSpace: "nowrap",
     [`&.${tableCellClasses.head}`]: {
       backgroundColor: theme!.palette.common.black,
       color: theme!.palette.common.white,
     },
     [`&.${tableCellClasses.body}`]: {
-      fontSize: 20,
+      fontSize: 16,
     },
   })
 );
@@ -45,6 +47,10 @@ export interface ProductTableProps {
 }
 
 export default function ProductTable({ items }: ProductTableProps) {
+  const { isOpen, setOpen } = useConfirmDialog({
+    title: "Delete?",
+  });
+
   return (
     <TableContainer
       component={Paper}
@@ -89,7 +95,9 @@ export default function ProductTable({ items }: ProductTableProps) {
                 }}>
                 <Button variant="contained" color="info">View</Button>
                 <Button variant="contained" color="primary">Edit</Button>
-                <Button variant="contained" color="error">Delete</Button>
+                <Button variant="contained" color="error" onClick={() => {
+                  setOpen(true);
+                }}>Delete</Button>
               </StyledTableCell>
             </StyledTableRow>
           ))}
