@@ -9,9 +9,10 @@ html {
 }
 
 body {
+  background-color: #1f2267;
   min-height: 100%;
 }
 
-div#__next {
-  height: 100%;
+#__next {
+  height: 100vh;
 }

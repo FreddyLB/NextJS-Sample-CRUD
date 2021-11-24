@@ -4,9 +4,11 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "src/shared/models/product.model";
 import { ProductApiClient } from "src/client/api/product.client";
 import { ArrayUtils } from "src/shared/utils/ArrayUtils";
-import Image from "next/image";
 import React from "react";
 import { ImageWithFallback } from "src/components/ImageWithFallback";
+import AddIcon from "@mui/icons-material/Add";
+import { NavLink } from "src/components/NavLink";
+import { useCustomClasses } from "src/components/useCustomClasses";
 
 const productClient = new ProductApiClient();
 
@@ -39,25 +41,34 @@ function Home({
   data,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   // const result = data.data;
-  const products = ArrayUtils.repeat(PINNAPLE, 24);
+  const products = ArrayUtils.repeat(PINNAPLE, 13);
+  const classes = useCustomClasses();
 
   return (
     <Container>
       <Grid
         container
         columns={{ xs: 4, sm: 8, md: 12 }}
+        spacing={2}
         sx={{
+          paddingTop: 2,
           justifyContent: "center",
         }}
       >
+        <Grid
+          container
+          sx={{
+            justifyContent: "end",
+          }}
+        >
+          <NavLink className={classes.blackBtn} href={"/add"}>
+            <AddIcon />
+            Add Product
+          </NavLink>
+        </Grid>
+
         {products.map((item, index) => (
-          <Grid
-            item
-            key={index}
-            sx={{
-              margin: 2,
-            }}
-          >
+          <Grid item key={index}>
             <ProductCard product={item} />
           </Grid>
         ))}
