@@ -1,5 +1,17 @@
-html, body {
+html,
+body {
   padding: 0;
   margin: 0;
-  height: 100vh !important;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+}
+
+div#__next {
+  height: 100%;
 }
