@@ -3,6 +3,7 @@ import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { NavLink } from "./NavLink";
+import Image from "next/image";
 
 export function ProductCard({ product }: { product: IProduct }) {
   return (
@@ -29,13 +30,25 @@ export function ProductCard({ product }: { product: IProduct }) {
           {product.name}
         </Typography>
         <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-          <NavLink variant="contained" color="info"  href={`/details/${product.id}`}>
+          <NavLink
+            variant="contained"
+            color="info"
+            href={`/details/${product.id}`}
+          >
             Details
           </NavLink>
-          <NavLink variant="contained" color="primary" href={`/edit/${product.id}`}>
+          <NavLink
+            variant="contained"
+            color="primary"
+            href={`/edit/${product.id}`}
+          >
             Edit
           </NavLink>
-          <NavLink variant="contained" color="error"  href={`/delete/${product.id}`}>
+          <NavLink
+            variant="contained"
+            color="error"
+            href={`/delete/${product.id}`}
+          >
             Delete
           </NavLink>
         </Box>
