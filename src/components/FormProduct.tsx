@@ -2,23 +2,24 @@ import { Box, Button, styled, TextField } from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useCustomClasses } from "./useCustomClasses";
 
 const StyledTextField = styled(TextField)({
   color: "white",
-  backgroundColor: "rgba(0, 0, 0, 0.1)",
   "& input, & textarea": {
     color: "white",
   },
-  "& label" : {
-      color: "rgba(255, 255, 255, 0.4)"
+  "& label": {
+    color: "rgba(255, 255, 255, 0.4)",
   },
   "& label.Mui-focused": {
-    color: "rgba(255, 255, 255, 0.4)"
+    color: "rgba(255, 255, 255, 0.4)",
   },
   "& .MuiInput-underline:after": {
     borderBottomColor: "white",
   },
   "& .MuiOutlinedInput-root": {
+    backgroundColor: "rgba(0, 0, 0, 0.1)",
     "& fieldset": {
       borderColor: "white",
     },
@@ -49,6 +50,7 @@ export function FormProduct({
   initialValue,
   onSubmit,
 }: FormProductProps) {
+  const classes = useCustomClasses();
   const {
     register,
     handleSubmit,
@@ -56,6 +58,7 @@ export function FormProduct({
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: initialValue,
+    shouldFocusError: false,
   });
 
   return (
@@ -70,6 +73,8 @@ export function FormProduct({
           label="Name"
           sx={{ margin: "10px 0" }}
           {...register("name", { required: true })}
+          error={!!errors.price}
+          helperText={errors.price && "Name is required"}
         />
 
         <StyledTextField
@@ -84,6 +89,8 @@ export function FormProduct({
           label="Image URL"
           sx={{ margin: "10px 0" }}
           {...register("imageUrl", { required: true })}
+          error={!!errors.imageUrl}
+          helperText={errors.imageUrl && "Image URL is required"}
         />
 
         <StyledTextField
@@ -91,10 +98,18 @@ export function FormProduct({
           type="number"
           sx={{ margin: "10px 0" }}
           {...register("price", { required: true, min: 1 })}
+          error={!!errors.price}
+          helperText={
+            errors.price && "Price is required and must be greater than 1"
+          }
         />
 
         <Box>
-          <Button type="submit" variant="contained">
+          <Button
+            type="submit"
+            variant="contained"
+            className={classes.blackBtn}
+          >
             {buttonText}
           </Button>
         </Box>
