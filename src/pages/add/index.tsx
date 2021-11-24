@@ -5,9 +5,14 @@ import { NavLink } from "src/components/NavLink";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { FormProduct } from "src/components/FormProduct";
+import { ProductApiClient } from "src/client/api/product.client";
+import { useRouter } from "next/router";
+
+const productClient = new ProductApiClient();
 
 export default function AddProduct() {
   const classes = useCustomClasses();
+  const router = useRouter();
 
   return (
     <Container>
@@ -20,6 +25,7 @@ export default function AddProduct() {
         buttonText="Add Product"
         onSubmit={(data) => {
           console.log(data);
+          router.push("/");
         }}
       />
     </Container>

@@ -1,47 +1,34 @@
 import { PageResult } from "@server/repositories/base/repository";
-import { Box, Grid, Container, Button, Paper, Typography } from "@mui/material";
+import { Grid, Container } from "@mui/material";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "src/shared/models/product.model";
 import { ProductApiClient } from "src/client/api/product.client";
 import { ArrayUtils } from "src/shared/utils/ArrayUtils";
 import React from "react";
-import { ImageWithFallback } from "src/components/ImageWithFallback";
 import AddIcon from "@mui/icons-material/Add";
 import { NavLink } from "src/components/NavLink";
 import { useCustomClasses } from "src/components/useCustomClasses";
+import { ProductCard } from "src/components/ProductCard";
 
 const productClient = new ProductApiClient();
 
-const PINNAPLE: IProduct = {
-  id: "1",
-  name: "Pinnaple",
-  description:
-    "A pinnaple is a small, round fruit with a hard, fibrous, brownish-black pulp. The pulp is usually edible, but the pinnaple is also used as a food additive.",
-  price: 1.99,
-  imageUrl:
-    "https://cdn.mos.cms.futurecdn.net/JEKZM22ZasnFC7JFGkAMvU-1024-80.jpg.webp",
-  color: "yellow",
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
-
 type Data = {
-  data: PageResult<IProduct>;
+  result: PageResult<IProduct>;
 };
 
 export const getServerSideProps: GetServerSideProps<Data> = async () => {
-  const data = await productClient.getAll();
+  const result = await productClient.getAll();
 
   return {
-    props: { data },
+    props: { result },
   };
 };
 
 function Home({
-  data,
+  result,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  // const result = data.data;
-  const products = ArrayUtils.repeat(PINNAPLE, 13);
+  const data = result.data;
+  const products = ArrayUtils.repeat(data[0], 13);
   const classes = useCustomClasses();
 
   return (
@@ -74,46 +61,6 @@ function Home({
         ))}
       </Grid>
     </Container>
-  );
-}
-
-function ProductCard({ product }: { product: IProduct }) {
-  return (
-    <Paper
-      elevation={3}
-      sx={{ backgroundColor: "white", overflow: "hidden", borderRadius: 3 }}
-    >
-      <ImageWithFallback
-        src={product.imageUrl!}
-        alt={product.name}
-        objectFit="cover"
-        width={300}
-        height={250}
-      />
-      <Box sx={{ padding: 1 }}>
-        <Typography
-          sx={{
-            fontSize: 25,
-            paddingBottom: 2,
-            fontWeight: "bold",
-            color: "black",
-          }}
-        >
-          {product.name}
-        </Typography>
-        <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
-          <Button variant="contained" color="info">
-            Details
-          </Button>
-          <Button variant="contained" color="primary">
-            Edit
-          </Button>
-          <Button variant="contained" color="error">
-            Delete
-          </Button>
-        </Box>
-      </Box>
-    </Paper>
   );
 }
 

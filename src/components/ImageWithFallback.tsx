@@ -3,7 +3,8 @@ import { useRef, useState } from "react";
 
 const NOT_FOUND_IMAGE = "/images/not-found.jpg";
 
-export interface ImageWithFallbackProps extends ImageProps {
+export interface ImageWithFallbackProps extends Omit<ImageProps, 'src'> {
+  src?: string;
   fallbackImage?: string;
   alt: string;
 }
@@ -21,7 +22,7 @@ export function ImageWithFallback({
   return (
     <Image
       {...rest}
-      src={imageSrc}
+      src={imageSrc || fallbackImage}
       alt={alt}
       onError={() => {
         // To prevent a loop if the fallback image is not found
