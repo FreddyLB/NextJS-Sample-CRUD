@@ -24,12 +24,10 @@ export function ImageWithFallback({
       src={imageSrc}
       alt={alt}
       onError={() => {
-        console.log("Setting fallback image...")
         // To prevent a loop if the fallback image is not found
         if (fallbackImageSet.current === false) {
           setImageSrc(fallbackImage!);
           fallbackImageSet.current = true;
-          console.log("Fallback image was set")
         }
       }}
     />
