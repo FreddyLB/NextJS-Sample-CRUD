@@ -74,21 +74,21 @@ export function ProductCard({ product, index }: ProductCardProps) {
           <NavLink
             variant="contained"
             color="info"
-            href={`/details/${product.id}`}
+            href={`/products/details/${product.id}`}
           >
             Details
           </NavLink>
           <NavLink
             variant="contained"
             color="primary"
-            href={`/edit/${product.id}`}
+            href={`/products/edit/${product.id}`}
           >
             Edit
           </NavLink>
           <NavLink
             variant="contained"
             color="error"
-            href={`/delete/${product.id}`}
+            href={`/products/delete/${product.id}`}
           >
             Delete
           </NavLink>

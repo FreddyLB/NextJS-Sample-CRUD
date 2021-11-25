@@ -44,7 +44,7 @@ function Home({
   return (
     <Container>
       <Box>
-        <NavLink className={classes.blackBtn} href={"/add"} sx={{
+        <NavLink className={classes.blackBtn} href={"/products/add"} sx={{
           marginBottom: 2
         }}>
           <AddIcon />
