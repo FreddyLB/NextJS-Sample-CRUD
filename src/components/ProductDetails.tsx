@@ -1,12 +1,22 @@
-import { Box, Divider, Typography } from "@mui/material";
+import { makeStyles } from "@material-ui/core";
+import { Box, Divider, Paper, Typography } from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
+import { ImageWithFallback } from "./ImageWithFallback";
+
+const useStyles = makeStyles((theme) => ({
+  image: {
+    padding: "10px !important",
+  },
+}));
 
 export interface ProductDetailsProps {
   product: IProduct;
 }
 
 export function ProductDetails({ product }: ProductDetailsProps) {
+  const classes = useStyles();
+
   return (
     <Box>
       <Box
@@ -15,6 +25,26 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           flexDirection: "column",
         }}
       >
+        <Paper
+          elevation={3}
+          sx={{
+            width: "100%",
+            height: [300, 400],
+            margin: "16px 0",
+            position: "relative",
+            overflow: "hidden",
+            backgroundColor: "black",
+          }}
+        >
+          <ImageWithFallback
+            src={product.imageUrl}
+            alt={product.name}
+            className={classes.image}
+            layout="fill"
+            objectFit="contain"
+            useProxy
+          />
+        </Paper>
         <TextWithLabel label="Name" value={product.name} />
         <TextWithLabel label="Description" value={product.description} />
         <TextWithLabel label="Image URL" value={product.imageUrl} />
