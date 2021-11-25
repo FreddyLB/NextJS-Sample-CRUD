@@ -3,28 +3,69 @@ import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { NavLink } from "./NavLink";
-import Image from "next/image";
+import { makeStyles } from "@material-ui/core";
 
-export function ProductCard({ product }: { product: IProduct }) {
+const useStyles = makeStyles((theme) => ({
+  "@keyframes fadeInGrow": {
+    from: {
+      opacity: 0,
+      transform: "scale(0.5)",
+    },
+    to: {
+      opacity: 1,
+      transform: "scale(1)",
+    },
+  },
+  paperCard: {
+    "&:hover img": {
+      transform: "scale(1.1)",
+    },
+    opacity: 0,
+    transform: "scale(0.5)",
+    animation: `0.7s $fadeInGrow forwards`,
+  },
+  paperCardImage: {
+    transition: "transform 500ms",
+  },
+}));
+
+export interface ProductCardProps {
+  product: IProduct;
+  index: number;
+}
+
+export function ProductCard({ product, index }: ProductCardProps) {
+  const classes = useStyles();
   return (
     <Paper
       elevation={3}
-      sx={{ backgroundColor: "white", overflow: "hidden", borderRadius: 3 }}
+      className={classes.paperCard}
+      sx={{
+        backgroundColor: "#06062c",
+        overflow: "hidden",
+        borderRadius: 3,
+        height: 320,
+        display: "flex",
+        flexDirection: "column",
+        animationDelay: `${(index + 1) * 100}ms !important`,
+      }}
     >
       <ImageWithFallback
         src={product.imageUrl!}
         alt={product.name}
+        className={classes.paperCardImage}
         objectFit="cover"
-        width={300}
-        height={250}
+        layout="responsive"
+        width={700}
+        height={500}
       />
-      <Box sx={{ padding: 1 }}>
+      <Box sx={{ padding: 1, marginTop: "auto" }}>
         <Typography
           sx={{
             fontSize: 25,
             paddingBottom: 2,
             fontWeight: "bold",
-            color: "black",
+            color: "white",
           }}
         >
           {product.name}

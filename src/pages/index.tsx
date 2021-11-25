@@ -1,5 +1,5 @@
 import { PageResult } from "@server/repositories/base/repository";
-import { Grid, Container } from "@mui/material";
+import { Grid, Container, Box } from "@mui/material";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "src/shared/models/product.model";
 import { ProductApiClient } from "src/client/api/product.client";
@@ -9,6 +9,15 @@ import AddIcon from "@mui/icons-material/Add";
 import { NavLink } from "src/components/NavLink";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { ProductCard } from "src/components/ProductCard";
+import { makeStyles } from "@material-ui/core";
+
+const useClasses = makeStyles((theme) => ({
+  grid: {
+    display: "grid",
+    gap: 15,
+    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+  },
+}));
 
 const productClient = new ProductApiClient();
 
@@ -30,36 +39,26 @@ function Home({
   const data = result.data;
   const products = ArrayUtils.repeat(data[0], 13);
   const classes = useCustomClasses();
+  const boxClasses = useClasses();
 
   return (
     <Container>
-      <Grid
-        container
-        columns={{ xs: 4, sm: 8, md: 12 }}
-        spacing={2}
-        sx={{
-          paddingTop: 2,
-          justifyContent: "center",
-        }}
-      >
-        <Grid
-          container
-          sx={{
-            justifyContent: "end",
-          }}
-        >
-          <NavLink className={classes.blackBtn} href={"/add"}>
-            <AddIcon />
-            Add Product
-          </NavLink>
-        </Grid>
+      <Box>
+        <NavLink className={classes.blackBtn} href={"/add"} sx={{
+          marginBottom: 2
+        }}>
+          <AddIcon />
+          Add Product
+        </NavLink>
+      </Box>
 
+      <Box className={boxClasses.grid}>
         {products.map((item, index) => (
-          <Grid item key={index}>
-            <ProductCard product={item} />
-          </Grid>
+          <Box key={index} >
+            <ProductCard product={item} index={index} />
+          </Box>
         ))}
-      </Grid>
+      </Box>
     </Container>
   );
 }
