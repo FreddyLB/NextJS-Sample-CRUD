@@ -4,16 +4,14 @@ import {
   PaginationOptions,
   SortDirection,
 } from "./repository";
-import { Model, Document, FilterQuery } from "mongoose";
+import { Model, FilterQuery } from "mongoose";
 import { ValidationError } from "@server/utils/errors";
 
 const DEFAULT_MAX_PAGE_SIZE = 10;
 const NO_FOUND_ERROR_MESSAGE = "Resourse not found";
 
-export abstract class MongoRepository<
-  TEntity extends Document,
-  TModel extends Model<TEntity>
-> implements IRepository<TEntity>
+export abstract class MongoRepository<TEntity, TModel extends Model<TEntity>>
+  implements IRepository<TEntity>
 {
   constructor(protected readonly model: TModel) {}
 
@@ -67,21 +65,11 @@ export abstract class MongoRepository<
   async findOne(query: Partial<TEntity> = {}): Promise<TEntity | null> {
     const filterQuery = query as FilterQuery<TEntity>;
     const result = await this.model.findOne(filterQuery);
-
-    if (result == null) {
-      throw new ValidationError(NO_FOUND_ERROR_MESSAGE);
-    }
-
     return result;
   }
 
   async findById(id: string): Promise<TEntity | null> {
     const result = await this.model.findById(id);
-
-    if (result == null) {
-      throw new ValidationError(NO_FOUND_ERROR_MESSAGE);
-    }
-
     return result;
   }
 
@@ -96,11 +84,7 @@ export abstract class MongoRepository<
       throw new ValidationError(NO_FOUND_ERROR_MESSAGE);
     }
 
-    entityToUpdate = {
-      ...entityToUpdate,
-      ...entity,
-    };
-
+    entityToUpdate.set(entity);
     entityToUpdate.save();
     return entityToUpdate;
   }
