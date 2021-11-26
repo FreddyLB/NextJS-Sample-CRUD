@@ -74,7 +74,7 @@ export function FormProduct({
     shouldFocusError: false,
   });
 
-  console.log("Image URL: ", imageUrl)
+  console.log("Image URL: ", imageUrl);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box
@@ -97,7 +97,7 @@ export function FormProduct({
           >
             <ImageWithFallback
               src={imageUrl}
-              alt={"Product Image"}
+              alt={initialValue?.imageUrl || "New product image"}
               className={classes.imgContainer}
               layout="fill"
               objectFit="contain"
