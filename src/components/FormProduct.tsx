@@ -1,13 +1,4 @@
-import {
-  Box,
-  Paper,
-  Button,
-  styled,
-  TextField,
-  Zoom,
-  Grow,
-  Collapse,
-} from "@mui/material";
+import { Box, Paper, Button, styled, TextField, Collapse } from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { useForm } from "react-hook-form";
@@ -74,7 +65,6 @@ export function FormProduct({
     shouldFocusError: false,
   });
 
-  console.log("Image URL: ", imageUrl);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box
