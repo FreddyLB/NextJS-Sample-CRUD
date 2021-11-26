@@ -8,9 +8,10 @@ import { NavLink } from "src/components/NavLink";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { ProductCard } from "src/components/ProductCard";
 import { makeStyles } from "@material-ui/core";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { SearchTextField } from "src/components/SearchTextField";
+import { useDebounce } from "src/hooks/useDebounce";
 
 const useClasses = makeStyles(() => ({
   grid: {
@@ -39,8 +40,23 @@ function Home({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [products, setProducts] = useState<IProduct[]>(result.data);
   const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 300);
+  const isFirstRender = useRef(true);
   const classes = useCustomClasses();
   const boxClasses = useClasses();
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    const result = productClient.search({
+      search: debouncedSearch,
+    });
+
+    result.then((res) => setProducts(res.data));
+  }, [debouncedSearch]);
 
   const CenterText = function CenterText() {
     if (result.data.length === 0) {
@@ -69,21 +85,21 @@ function Home({
         </NavLink>
       </Box>
       {result.data.length > 0 && (
-        <Box sx={{
-          width: "100%",
-          margin: "10px 0",
-          display: "flex",
-          justifyContent: "center",
-          flexDirection: "row",
-        }}>
+        <Box
+          sx={{
+            width: "100%",
+            margin: "10px 0",
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "row",
+          }}
+        >
           <SearchTextField
             fullWidth
             value={search}
             variant="outlined"
             color="info"
-            sx={{
-              color: "white"
-            }}
+            sx={{ color: "white" }}
             onSearch={(term) => {
               console.log(term);
               setSearch(term);

@@ -57,7 +57,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
           className={classes.paperCardImage}
           objectFit="cover"
           layout="fill"
-          priority
+          priority          
         />
       </Box>
 
