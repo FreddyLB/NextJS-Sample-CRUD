@@ -35,7 +35,7 @@ export default function DeleteProduct({
   return (
     <Container>
       <PageTitle variant="h4" color="white" title="Delete Product" />
-      <NavLink href="/" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
+      <NavLink href="/products" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
         <ArrowBackIcon />
         Back
       </NavLink>
@@ -51,7 +51,7 @@ export default function DeleteProduct({
           onClick={async () => {
             try {
               await productClient.delete(product.id);
-              router.push("/");
+              router.push("/products");
             } catch (e) {
               console.error(e);
             }

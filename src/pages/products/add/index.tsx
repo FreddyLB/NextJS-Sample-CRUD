@@ -1,4 +1,4 @@
-import { Container, Paper } from "@mui/material";
+import { Container } from "@mui/material";
 import { PageTitle } from "src/components/PageTitle";
 import React from "react";
 import { NavLink } from "src/components/NavLink";
@@ -17,7 +17,7 @@ export default function AddProduct() {
   return (
     <Container>
       <PageTitle variant="h4" color="white" title="Create Product" />
-      <NavLink href="/" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
+      <NavLink href="/products" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
         <ArrowBackIcon />
         Back
       </NavLink>
@@ -26,7 +26,7 @@ export default function AddProduct() {
         onSubmit={async (data) => {
           try {
             await productClient.create(data);
-            router.push("/");
+            router.push("/products");
           } catch (e) {
             console.error(e);
           }

@@ -35,7 +35,7 @@ export default function EditProduct({
   return (
     <Container>
       <PageTitle variant="h4" color="white" title="Edit Product" />
-      <NavLink href="/" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
+      <NavLink href="/products" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
         <ArrowBackIcon />
         Back
       </NavLink>
@@ -45,7 +45,7 @@ export default function EditProduct({
         onSubmit={async (data) => {
           try {
             await productClient.update(product.id, data);
-            router.push("/");
+            router.push("/products");
           } catch (e) {
             console.error(e);
           }

@@ -37,7 +37,7 @@ export default function ViewProduct({
   return (
     <Container>
       <PageTitle variant="h4" color="white" title="Product Details" />
-      <NavLink href="/" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
+      <NavLink href="/products" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
         <ArrowBackIcon />
         Back
       </NavLink>
