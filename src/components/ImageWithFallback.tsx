@@ -1,5 +1,5 @@
 import Image, { ImageLoader, ImageProps } from "next/image";
-import { useRef, useState } from "react";
+import { useState, useEffect } from "react";
 import { API_URL } from "src/client/contants";
 
 const NOT_FOUND_IMAGE = "/images/not-found.jpg";
@@ -9,12 +9,12 @@ export interface ImageWithFallbackProps extends Omit<ImageProps, "src"> {
   src?: string;
   fallbackImage?: string;
   alt: string;
-  useProxy?: boolean; 
+  useProxy?: boolean;
 }
 
-const imageLoader : ImageLoader = ({ src, width, quality }) => {
-  return `${src}?w=${width}&q=${quality || 75}`
-}
+const imageLoader: ImageLoader = ({ src, width, quality }) => {
+  return `${src}?w=${width}&q=${quality || 75}`;
+};
 
 export function ImageWithFallback({
   src,
@@ -23,15 +23,25 @@ export function ImageWithFallback({
   useProxy,
   ...rest
 }: ImageWithFallbackProps) {
-  fallbackImage = fallbackImage ?? NOT_FOUND_IMAGE;
-  const actualSrc = src || fallbackImage;
+  fallbackImage ??= NOT_FOUND_IMAGE;
+  src ??= fallbackImage;
 
-  if (useProxy === true && src != null) {
+  if (useProxy === true && src != fallbackImage) {
+    console.log("Set fallback")
     src = IMAGE_PROXY_URL + encodeURIComponent(src);
   }
 
-  const [imageSrc, setImageSrc] = useState(actualSrc);
-  const fallbackImageSet = useRef(false);
+  const [imageSrc, setImageSrc] = useState(src);
+
+  useEffect(() => {
+    if (src && src != imageSrc) {
+      setImageSrc(src);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [src]);
+
+  console.log("IMAGE URL: ", imageSrc);
 
   return (
     <Image
@@ -40,10 +50,10 @@ export function ImageWithFallback({
       alt={alt}
       loader={imageLoader}
       onError={() => {
-        // To prevent a loop if the fallback image is not found
-        if (fallbackImageSet.current === false) {
+        // Check if the fallback image is not already set
+        console.error("Image not found");
+        if (imageSrc != fallbackImage) {
           setImageSrc(fallbackImage!);
-          fallbackImageSet.current = true;
         }
       }}
     />
