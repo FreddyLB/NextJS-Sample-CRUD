@@ -1,4 +1,10 @@
-import { Box, Divider, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Paper,
+  Typography,
+  Link as MaterialLink,
+} from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { ImageWithFallback } from "./ImageWithFallback";
@@ -36,12 +42,13 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             className={classes.imgContainer}
             layout="fill"
             objectFit="contain"
+            priority
             useProxy
           />
         </Paper>
         <TextWithLabel label="Name" value={product.name} />
         <TextWithLabel label="Description" value={product.description} />
-        <TextWithLabel label="Image URL" value={product.imageUrl} />
+        <LinkWithLabel label="Image URL" url={product.imageUrl!} />
         <TextWithLabel label="Price" value={product.price} />
       </Box>
     </Box>
@@ -53,11 +60,7 @@ const TextWithLabel: React.FC<{ label: string; value?: string | number }> = ({
   value,
 }) => {
   return (
-    <Box
-      sx={{
-        marginBottom: 2,
-      }}
-    >
+    <Box sx={{ marginBottom: 2 }}>
       <Box
         sx={{
           display: "flex",
@@ -65,11 +68,47 @@ const TextWithLabel: React.FC<{ label: string; value?: string | number }> = ({
         }}
       >
         <Typography color="red" sx={{ minWidth: 150, fontSize: 16 }}>
-          {`${label}: `}
+          {label}
         </Typography>
         <Typography color="white" sx={{ fontSize: 16 }}>
           {value}
         </Typography>
+      </Box>
+      <Divider
+        sx={{
+          width: "100%",
+          height: 1,
+          backgroundColor: "white",
+          opacity: 0.1,
+          margin: "16px 0",
+        }}
+      />
+    </Box>
+  );
+};
+
+const LinkWithLabel: React.FC<{ label: string; url: string }> = ({
+  label,
+  url,
+}) => {
+  return (
+    <Box sx={{ marginBottom: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: ["column", "row"],
+        }}
+      >
+        <Typography color="red" sx={{ minWidth: 150, fontSize: 16 }}>
+          {label}
+        </Typography>
+        <MaterialLink
+          target="_blank"
+          href={url}
+          sx={{ fontSize: 16, fontFamily: "monospace" }}
+        >
+          {url}
+        </MaterialLink>
       </Box>
       <Divider
         sx={{
