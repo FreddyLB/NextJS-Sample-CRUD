@@ -1,5 +1,5 @@
 import { PageResult } from "@server/repositories/base/repository";
-import { Grid, Container, Box } from "@mui/material";
+import { Grid, Container, Box, Typography } from "@mui/material";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "src/shared/models/product.model";
 import { ProductApiClient } from "src/client/api/product.client";
@@ -15,7 +15,7 @@ const useClasses = makeStyles((theme) => ({
   grid: {
     display: "grid",
     gap: 15,
-    gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+    gridTemplateColumns: "repeat(auto-fit, 250px)",
   },
 }));
 
@@ -36,30 +36,50 @@ export const getServerSideProps: GetServerSideProps<Data> = async () => {
 function Home({
   result,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const data = result.data;
-  const products = ArrayUtils.repeat(data[0], 13);
+  const products = result.data;
   const classes = useCustomClasses();
   const boxClasses = useClasses();
 
   return (
     <Container>
       <Box>
-        <NavLink className={classes.blackBtn} href={"/products/add"} sx={{
-          marginBottom: 2
-        }}>
+        <NavLink
+          className={classes.blackBtn}
+          href={"/products/add"}
+          sx={{
+            marginBottom: 2,
+          }}
+        >
           <AddIcon />
           Add Product
         </NavLink>
       </Box>
 
+      {products && <NotProducts />}
+
       <Box className={boxClasses.grid}>
         {products.map((item, index) => (
-          <Box key={index} >
+          <Box key={index}>
             <ProductCard product={item} index={index} />
           </Box>
         ))}
       </Box>
     </Container>
+  );
+}
+
+function NotProducts() {
+  return (
+    <Box sx={{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      height: "50vh",
+    }}>
+      <Typography variant="h3" color="white" sx={{ fontFamily: "monospace" }}>
+        No products available
+      </Typography>
+    </Box>
   );
 }
 
