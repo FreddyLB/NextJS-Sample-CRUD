@@ -42,9 +42,13 @@ export default function EditProduct({
       <FormProduct
         buttonText="Edit Product"
         initialValue={product}
-        onSubmit={(data) => {
-          console.log(data);
-          router.push("/");
+        onSubmit={async (data) => {
+          try {
+            await productClient.update(product.id, data);
+            router.push("/");
+          } catch (e) {
+            console.error(e);
+          }
         }}
       />
     </Container>

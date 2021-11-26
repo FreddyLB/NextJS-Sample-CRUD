@@ -23,9 +23,13 @@ export default function AddProduct() {
       </NavLink>
       <FormProduct
         buttonText="Add Product"
-        onSubmit={(data) => {
-          console.log(data);
-          router.push("/");
+        onSubmit={async (data) => {
+          try {
+            await productClient.create(data);
+            router.push("/");
+          } catch (e) {
+            console.error(e);
+          }
         }}
       />
     </Container>
