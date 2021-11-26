@@ -1,17 +1,15 @@
 import { PageResult } from "@server/repositories/base/repository";
-import { Grid, Container, Box, Typography } from "@mui/material";
+import { Container, Box, Typography } from "@mui/material";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "src/shared/models/product.model";
 import { ProductApiClient } from "src/client/api/product.client";
-import { ArrayUtils } from "src/shared/utils/ArrayUtils";
-import React from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { NavLink } from "src/components/NavLink";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { ProductCard } from "src/components/ProductCard";
 import { makeStyles } from "@material-ui/core";
 
-const useClasses = makeStyles((theme) => ({
+const useClasses = makeStyles(() => ({
   grid: {
     display: "grid",
     gap: 15,
@@ -70,12 +68,15 @@ function Home({
 
 function NotProducts() {
   return (
-    <Box sx={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "50vh",
-    }}>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "50vh",
+        userSelect: "none",
+      }}
+    >
       <Typography variant="h3" color="white" sx={{ fontFamily: "monospace" }}>
         No products available
       </Typography>
