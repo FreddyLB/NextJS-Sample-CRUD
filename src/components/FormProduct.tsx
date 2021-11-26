@@ -1,9 +1,10 @@
 import { Box, Paper, Button, styled, TextField, Collapse } from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Validate } from "react-hook-form";
 import { useCustomClasses } from "./useCustomClasses";
 import { ImageWithFallback } from "src/components/ImageWithFallback";
+import { checkIsImage } from "@shared/utils/checkIsImage";
 
 const StyledTextField = styled(TextField)({
   color: "white",
@@ -117,9 +118,9 @@ export function FormProduct({
           label="Image URL"
           autoComplete="off"
           sx={{ margin: "10px 0" }}
-          {...register("imageUrl", { required: true, minLength: 1 })}
+          {...register("imageUrl", { validate: validateImageUrl })}
           error={!!errors.imageUrl}
-          helperText={errors.imageUrl && "Image URL is required"}
+          helperText={errors.imageUrl?.message}
           onChange={(e) => {
             setImageUrl(e.target.value?.trim());
           }}
@@ -148,4 +149,32 @@ export function FormProduct({
       </Box>
     </form>
   );
+}
+
+const validateImageUrl: Validate<string | undefined> = async (url) => {
+  if (url == null || url.trim().length === 0) {
+    return "Image URL is required";
+  }
+
+  try {
+    const isImage = await checkIsImage(url);
+
+    if (!isImage) {
+      return "Invalid image URL";
+    }
+  } catch (e) {
+    console.error(e);
+
+    // Fallback in case CORS block the request for HEAD
+    if (!isValidImageURL(url)) {
+      return "Invalid image URL";
+    }
+  }
+
+  return true;
+};
+
+function isValidImageURL(url: string) {
+  const imageExtensions =  [".jpg", ".png", ".jpeg", ".bmp", ".webp", ".svg", ".tiff", ".tif", ".gif", ".ico"];
+  return imageExtensions.some((ext) => url.endsWith(ext));
 }

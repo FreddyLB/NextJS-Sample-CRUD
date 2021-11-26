@@ -48,7 +48,6 @@ export function ImageWithFallback({
       loader={imageLoader}
       onError={() => {
         // Check if the fallback image is not already set
-        console.error("Image not found");
         if (imageSrc != fallbackImage) {
           setImageSrc(fallbackImage!);
         }
