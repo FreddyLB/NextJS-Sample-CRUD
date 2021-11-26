@@ -1,42 +1,52 @@
 import styled from "@emotion/styled";
 import { ChangeEvent } from "react";
-import { TextField } from "@mui/material";
+import { TextField, TextFieldProps } from "@mui/material";
 
 const StyledTextField = styled(TextField)({
+  "& input": {
+    color: "white",
+  },
+  "& label": {
+    color: "white",
+  },
+  "& .MuiInput-underline": {
+    borderBottomColor: "white",
+  },
   "& label.Mui-focused": {
-    color: "gray",
+    color: "white",
   },
   "& .MuiInput-underline:after": {
-    borderBottomColor: "gray",
+    borderBottomColor: "white",
   },
   "& .MuiOutlinedInput-root": {
     "& fieldset": {
-      borderColor: "gray",
+      borderColor: "white",
     },
     "&:hover fieldset": {
-      borderColor: "black",
+      borderColor: "white",
     },
     "&.Mui-focused fieldset": {
-      borderColor: "black",
+      borderColor: "white",
     },
   },
 });
 
-export interface SearchTextFieldProps {
+export type SearchTextFieldProps = TextFieldProps & {
   value: string;
   onSearch: (term: string) => void;
   className?: string;
-}
+};
 
 export function SearchTextField({
   value,
   onSearch,
   className,
+  ...rest
 }: SearchTextFieldProps) {
   return (
     <StyledTextField
+      {...rest}
       label="Search"
-      variant="standard"
       className={`w-full md:w-1/2 ${className || ""}`}
       value={value}
       onKeyPress={(e) => {

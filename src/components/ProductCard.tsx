@@ -50,15 +50,13 @@ export function ProductCard({ product, index }: ProductCardProps) {
         animationDelay: `${(index + 1) * 100}ms !important`,
       }}
     >
-      <Box>
+      <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
         <ImageWithFallback
           src={product.imageUrl!}
           alt={product.name}
           className={classes.paperCardImage}
           objectFit="cover"
-          layout="responsive"
-          width={700}
-          height={500}
+          layout="fill"
           priority
         />
       </Box>
@@ -74,7 +72,13 @@ export function ProductCard({ product, index }: ProductCardProps) {
         >
           {product.name}
         </Typography>
-        <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            gap: 2,
+          }}
+        >
           <NavLink
             variant="contained"
             color="info"

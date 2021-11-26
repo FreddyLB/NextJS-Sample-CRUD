@@ -10,12 +10,13 @@ import { ProductCard } from "src/components/ProductCard";
 import { makeStyles } from "@material-ui/core";
 import { useState } from "react";
 import React from "react";
+import { SearchTextField } from "src/components/SearchTextField";
 
 const useClasses = makeStyles(() => ({
   grid: {
     display: "grid",
     gap: 15,
-    gridTemplateColumns: "repeat(auto-fit, 250px)",
+    gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))",
   },
 }));
 
@@ -37,6 +38,7 @@ function Home({
   result,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [products, setProducts] = useState<IProduct[]>(result.data);
+  const [search, setSearch] = useState("");
   const classes = useCustomClasses();
   const boxClasses = useClasses();
 
@@ -66,7 +68,29 @@ function Home({
           Add Product
         </NavLink>
       </Box>
-
+      {result.data.length > 0 && (
+        <Box sx={{
+          width: "100%",
+          margin: "10px 0",
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "row",
+        }}>
+          <SearchTextField
+            fullWidth
+            value={search}
+            variant="outlined"
+            color="info"
+            sx={{
+              color: "white"
+            }}
+            onSearch={(term) => {
+              console.log(term);
+              setSearch(term);
+            }}
+          />
+        </Box>
+      )}
       <CenterText />
 
       <Box className={boxClasses.grid}>
