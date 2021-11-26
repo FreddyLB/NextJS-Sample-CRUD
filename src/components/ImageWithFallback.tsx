@@ -27,7 +27,6 @@ export function ImageWithFallback({
   src ??= fallbackImage;
 
   if (useProxy === true && src != fallbackImage) {
-    console.log("Set fallback")
     src = IMAGE_PROXY_URL + encodeURIComponent(src);
   }
 
@@ -40,8 +39,6 @@ export function ImageWithFallback({
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [src]);
-
-  console.log("IMAGE URL: ", imageSrc);
 
   return (
     <Image

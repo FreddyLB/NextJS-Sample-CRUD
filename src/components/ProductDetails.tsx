@@ -1,21 +1,15 @@
-import { makeStyles } from "@material-ui/core";
 import { Box, Divider, Paper, Typography } from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { ImageWithFallback } from "./ImageWithFallback";
-
-const useStyles = makeStyles((theme) => ({
-  image: {
-    padding: "10px !important",
-  },
-}));
+import { useCustomClasses } from "src/components/useCustomClasses";
 
 export interface ProductDetailsProps {
   product: IProduct;
 }
 
 export function ProductDetails({ product }: ProductDetailsProps) {
-  const classes = useStyles();
+  const classes = useCustomClasses();
 
   return (
     <Box>

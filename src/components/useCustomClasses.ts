@@ -10,4 +10,7 @@ export const useCustomClasses = makeStyles((theme) => ({
       width: "100%",
     },
   },
+  imgContainer: {
+    padding: "10px !important",
+  },
 }));

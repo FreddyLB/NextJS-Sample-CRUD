@@ -1,8 +1,18 @@
-import { Box, Button, styled, TextField } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Button,
+  styled,
+  TextField,
+  Zoom,
+  Grow,
+  Collapse,
+} from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useCustomClasses } from "./useCustomClasses";
+import { ImageWithFallback } from "src/components/ImageWithFallback";
 
 const StyledTextField = styled(TextField)({
   color: "white",
@@ -51,16 +61,20 @@ export function FormProduct({
   onSubmit,
 }: FormProductProps) {
   const classes = useCustomClasses();
+  const [imageUrl, setImageUrl] = React.useState<string | undefined>(
+    initialValue?.imageUrl
+  );
+
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: initialValue,
     shouldFocusError: false,
   });
 
+  console.log("Image URL: ", imageUrl)
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Box
@@ -69,6 +83,28 @@ export function FormProduct({
           flexDirection: "column",
         }}
       >
+        <Collapse in={!!imageUrl} collapsedSize={0}>
+          <Paper
+            elevation={3}
+            sx={{
+              width: "100%",
+              height: [300, 400],
+              margin: "16px 0",
+              position: "relative",
+              overflow: "hidden",
+              backgroundColor: "black",
+            }}
+          >
+            <ImageWithFallback
+              src={imageUrl}
+              alt={"Product Image"}
+              className={classes.imgContainer}
+              layout="fill"
+              objectFit="contain"
+              useProxy
+            />
+          </Paper>
+        </Collapse>
         <StyledTextField
           label="Name"
           sx={{ margin: "10px 0" }}
@@ -91,6 +127,9 @@ export function FormProduct({
           {...register("imageUrl", { required: true })}
           error={!!errors.imageUrl}
           helperText={errors.imageUrl && "Image URL is required"}
+          onChange={(e) => {
+            setImageUrl(e.target.value?.trim());
+          }}
         />
 
         <StyledTextField

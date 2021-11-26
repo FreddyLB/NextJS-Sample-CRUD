@@ -11,7 +11,6 @@ import {
 
 } from "next";
 import { IProduct } from "@shared/models/product.model";
-import { useRouter } from "next/router";
 import { ProductDetails } from "src/components/ProductDetails";
 
 const productClient = new ProductApiClient();
