@@ -53,7 +53,7 @@ function Home({
         </NavLink>
       </Box>
 
-      {products && <NotProducts />}
+      {products.length === 0 && <NotProducts />}
 
       <Box className={boxClasses.grid}>
         {products.map((item, index) => (

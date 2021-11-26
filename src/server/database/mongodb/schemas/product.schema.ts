@@ -24,7 +24,7 @@ const ProductShema = new Schema(
     },
     createdAt: {
       type: Date,
-      imageUrl: true,
+      immutable: true,
       required: true,
       default: () => Date.now(),
     },
