@@ -1,4 +1,4 @@
-import { Container, Box, Button } from "@mui/material";
+import { Container, Box, Button, Typography } from "@mui/material";
 import { PageTitle } from "src/components/PageTitle";
 import React from "react";
 import { NavLink } from "src/components/NavLink";
@@ -34,11 +34,14 @@ export default function DeleteProduct({
 
   return (
     <Container>
-      <PageTitle variant="h4" color="white" title="Delete Details" />
+      <PageTitle variant="h4" color="white" title="Delete Product" />
       <NavLink href="/" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
         <ArrowBackIcon />
         Back
       </NavLink>
+      <Typography variant="h5" color="error" sx={{margin: "4px 0"}}>
+        Are you sure you want to delete this product?
+      </Typography>
       <ProductDetails product={product} />
       <Box sx={{ margin: "20px 0" }}>
         <Button
