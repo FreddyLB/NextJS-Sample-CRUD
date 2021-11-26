@@ -8,6 +8,8 @@ import { NavLink } from "src/components/NavLink";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { ProductCard } from "src/components/ProductCard";
 import { makeStyles } from "@material-ui/core";
+import { useState } from "react";
+import React from "react";
 
 const useClasses = makeStyles(() => ({
   grid: {
@@ -34,9 +36,21 @@ export const getServerSideProps: GetServerSideProps<Data> = async () => {
 function Home({
   result,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const products = result.data;
+  const [products, setProducts] = useState<IProduct[]>(result.data);
   const classes = useCustomClasses();
   const boxClasses = useClasses();
+
+  const CenterText = function CenterText() {
+    if (result.data.length === 0) {
+      return <PageCenterText text="No products available" />;
+    }
+
+    if (products.length === 0) {
+      return <PageCenterText text="No products found" />;
+    }
+
+    return <></>;
+  };
 
   return (
     <Container>
@@ -53,7 +67,7 @@ function Home({
         </NavLink>
       </Box>
 
-      {products.length === 0 && <NotProducts />}
+      <CenterText />
 
       <Box className={boxClasses.grid}>
         {products.map((item, index) => (
@@ -66,7 +80,11 @@ function Home({
   );
 }
 
-function NotProducts() {
+interface PageCenterTextFProps {
+  text: string;
+}
+
+function PageCenterText({ text }: PageCenterTextFProps) {
   return (
     <Box
       sx={{
@@ -78,7 +96,7 @@ function NotProducts() {
       }}
     >
       <Typography variant="h3" color="white" sx={{ fontFamily: "monospace" }}>
-        No products available
+        {text}
       </Typography>
     </Box>
   );

@@ -50,15 +50,19 @@ export function ProductCard({ product, index }: ProductCardProps) {
         animationDelay: `${(index + 1) * 100}ms !important`,
       }}
     >
-      <ImageWithFallback
-        src={product.imageUrl!}
-        alt={product.name}
-        className={classes.paperCardImage}
-        objectFit="cover"
-        layout="responsive"
-        width={700}
-        height={500}
-      />
+      <Box>
+        <ImageWithFallback
+          src={product.imageUrl!}
+          alt={product.name}
+          className={classes.paperCardImage}
+          objectFit="cover"
+          layout="responsive"
+          width={700}
+          height={500}
+          priority
+        />
+      </Box>
+
       <Box sx={{ padding: 1, marginTop: "auto" }}>
         <Typography
           sx={{
