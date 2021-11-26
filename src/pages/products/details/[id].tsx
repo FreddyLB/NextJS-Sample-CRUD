@@ -1,11 +1,15 @@
-import { Container } from "@mui/material";
+import { Box, Container } from "@mui/material";
 import { PageTitle } from "src/components/PageTitle";
 import React from "react";
 import { NavLink } from "src/components/NavLink";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { ProductApiClient } from "src/client/api/product.client";
-import { GetServerSideProps, InferGetStaticPropsType } from "next";
+import {
+  GetServerSideProps,
+  InferGetServerSidePropsType,
+
+} from "next";
 import { IProduct } from "@shared/models/product.model";
 import { useRouter } from "next/router";
 import { ProductDetails } from "src/components/ProductDetails";
@@ -28,9 +32,8 @@ export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
 
 export default function ViewProduct({
   product,
-}: InferGetStaticPropsType<typeof getServerSideProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const classes = useCustomClasses();
-  const router = useRouter();
 
   return (
     <Container>
@@ -40,6 +43,17 @@ export default function ViewProduct({
         Back
       </NavLink>
       <ProductDetails product={product} />
+      <Box sx={{ margin: "20px 0" }}>
+        <NavLink
+          href={`/products/edit/${product.id}`}
+          className={classes.blackBtn}
+          sx={{
+            width: "100%",
+          }}
+        >
+          Edit
+        </NavLink>
+      </Box>
     </Container>
   );
 }

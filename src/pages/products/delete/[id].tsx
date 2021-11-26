@@ -1,11 +1,11 @@
-import { Container } from "@mui/material";
+import { Container, Box, Button } from "@mui/material";
 import { PageTitle } from "src/components/PageTitle";
 import React from "react";
 import { NavLink } from "src/components/NavLink";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { ProductApiClient } from "src/client/api/product.client";
-import { GetServerSideProps, InferGetStaticPropsType } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "@shared/models/product.model";
 import { useRouter } from "next/router";
 import { ProductDetails } from "src/components/ProductDetails";
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
 
 export default function DeleteProduct({
   product,
-}: InferGetStaticPropsType<typeof getServerSideProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const classes = useCustomClasses();
   const router = useRouter();
 
@@ -40,6 +40,23 @@ export default function DeleteProduct({
         Back
       </NavLink>
       <ProductDetails product={product} />
+      <Box sx={{ margin: "20px 0" }}>
+        <Button
+          sx={{ width: "100%" }}
+          variant="contained"
+          color="error"
+          onClick={async () => {
+            try {
+              await productClient.delete(product.id);
+              router.push("/");
+            } catch (e) {
+              console.error(e);
+            }
+          }}
+        >
+          Delete
+        </Button>
+      </Box>
     </Container>
   );
 }

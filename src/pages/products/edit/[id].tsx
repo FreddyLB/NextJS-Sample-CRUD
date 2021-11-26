@@ -6,7 +6,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useCustomClasses } from "src/components/useCustomClasses";
 import { FormProduct } from "src/components/FormProduct";
 import { ProductApiClient } from "src/client/api/product.client";
-import { GetServerSideProps, InferGetStaticPropsType } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "@shared/models/product.model";
 import { useRouter } from "next/router";
 
@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
 
 export default function EditProduct({
   product,
-}: InferGetStaticPropsType<typeof getServerSideProps>) {
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const classes = useCustomClasses();
   const router = useRouter();
 

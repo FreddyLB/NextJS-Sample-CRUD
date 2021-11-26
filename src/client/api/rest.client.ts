@@ -63,4 +63,9 @@ export class RestApiClient<T, TKey> {
     const result = await this.client.patch(`/${id}`, item, config);
     return result.data;
   }
+
+  async delete(id: TKey, config: AxiosRequestConfig<T> = {}): Promise<T> {
+    const reault = await this.client.delete(`/${id}`, config);
+    return reault.data;
+  }
 }
