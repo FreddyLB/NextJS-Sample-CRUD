@@ -64,7 +64,7 @@ const TextWithLabel: React.FC<{ label: string; value?: string | number }> = ({
           flexDirection: ["column", "row"],
         }}
       >
-        <Typography color="#ff0076" sx={{ minWidth: 150, fontSize: 16 }}>
+        <Typography color="red" sx={{ minWidth: 150, fontSize: 16 }}>
           {`${label}: `}
         </Typography>
         <Typography color="white" sx={{ fontSize: 16 }}>

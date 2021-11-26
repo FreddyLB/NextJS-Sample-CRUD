@@ -97,14 +97,16 @@ export function FormProduct({
         </Collapse>
         <StyledTextField
           label="Name"
+          autoComplete="off"
           sx={{ margin: "10px 0" }}
-          {...register("name", { required: true })}
+          {...register("name", { required: true, minLength: 1 })}
           error={!!errors.price}
           helperText={errors.price && "Name is required"}
         />
 
         <StyledTextField
           label="Description"
+          autoComplete="off"
           sx={{ margin: "10px 0" }}
           multiline
           rows={4}
@@ -113,8 +115,9 @@ export function FormProduct({
 
         <StyledTextField
           label="Image URL"
+          autoComplete="off"
           sx={{ margin: "10px 0" }}
-          {...register("imageUrl", { required: true })}
+          {...register("imageUrl", { required: true, minLength: 1 })}
           error={!!errors.imageUrl}
           helperText={errors.imageUrl && "Image URL is required"}
           onChange={(e) => {
