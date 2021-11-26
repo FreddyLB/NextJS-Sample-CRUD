@@ -33,7 +33,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
           <ImageWithFallback
             src={product.imageUrl}
             alt={product.name}
-            className={classes.image}
+            className={classes.imgContainer}
             layout="fill"
             objectFit="contain"
             useProxy
