@@ -17,10 +17,6 @@ const ProductShema = new Schema(
       type: String,
       trim: true,
     },
-    color: {
-      type: String,
-      required: true,
-    },
     price: {
       type: Number,
       required: true,
