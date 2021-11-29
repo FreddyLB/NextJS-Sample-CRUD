@@ -2,9 +2,9 @@ import React from "react";
 import { getFirebaseApp } from "src/client/firebase";
 import { createContext } from "react";
 import * as firebaseAuth from "firebase/auth";
-import { User, GoogleAuthProvider } from "firebase/auth";
+import { GoogleAuthProvider } from "firebase/auth";
 
-export type FirebaseUser = User;
+export type FirebaseUser = firebaseAuth.User;
 
 export interface AuthContextProps {
   user: FirebaseUser | null;
@@ -25,10 +25,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const app = getFirebaseApp();
   const auth = firebaseAuth.getAuth(app);
 
-  auth.onAuthStateChanged((user) => {
-    setUser(user);
-    console.log(user);
-  });
+  auth.onAuthStateChanged((user) => setUser(user));
 
   const loginWithGoogle = async () => {
     setIsLoading(true);
