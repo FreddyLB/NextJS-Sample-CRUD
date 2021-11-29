@@ -1,4 +1,52 @@
+import { Box, Paper, Typography } from "@mui/material";
+import React from "react";
+import { GoogleLoginButton } from "react-social-login-buttons";
 
 export default function Home() {
-  return <h1></h1>
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        marginTop: [5, 10]
+      }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          padding: "40px 30px",
+          backgroundColor: "white",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          borderRadius: 3,    
+          width: ["100%", "60%","30%"],    
+        }}
+      >
+        <Typography
+          sx={{
+            fontFamily: "monospace",
+            fontWeight: "bold",
+            fontSize: 18,
+            marginBottom: 2,
+          }}
+        >
+          Login with
+        </Typography>
+        <GoogleLoginButton onClick={() => console.log("Google button clicked")}>
+          <Typography
+            sx={{
+              fontFamily: "monospace",
+              fontSize: [13, 15],
+            }}
+          >
+            Login with google
+          </Typography>
+        </GoogleLoginButton>
+      </Paper>
+    </Box>
+  );
 }

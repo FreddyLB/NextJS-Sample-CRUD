@@ -1,30 +1,12 @@
-import { makeStyles } from "@material-ui/core";
-import { Box, AppBar, Toolbar, Typography, Button } from "@mui/material";
-import Link from "next/link";
+import { Box, AppBar, Toolbar, Button } from "@mui/material";
+import { useRouter } from "next/router";
 import React from "react";
-
-const useStyles = makeStyles(() => ({
-  appbar: {
-    "& h6": {
-      fontSize: "1.6rem",
-      fontFamily: "monospace",
-      display: "inline",
-      transition: "0.3s color"
-    },
-
-    "&:hover :first-child": {
-      color: "white",
-    },
-    "&:hover :last-child": {
-      color: "red",
-    },
-    "& :first-child": {
-      color: "red",
-    },
-  },
-}));
+import { Logo } from "./Logo";
 
 export function CustomAppBar() {
+  const router = useRouter();
+  const isHome = router.pathname === "/";
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="sticky" sx={{ backgroundColor: "black" }}>
@@ -41,22 +23,9 @@ export function CustomAppBar() {
             <Logo />
           </Box>
 
-          <Button color="inherit">Login</Button>
+          {!isHome && <Button color="inherit">Login</Button>}
         </Toolbar>
       </AppBar>
     </Box>
-  );
-}
-
-function Logo() {
-  const classes = useStyles();
-
-  return (
-    <Link href="/" passHref>
-      <Box className={classes.appbar}>
-        <Typography variant="h6">Enough</Typography>
-        <Typography variant="h6">Stuff</Typography>
-      </Box>
-    </Link>
   );
 }
