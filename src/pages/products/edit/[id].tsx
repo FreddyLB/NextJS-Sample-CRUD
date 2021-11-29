@@ -3,7 +3,7 @@ import { PageTitle } from "src/components/PageTitle";
 import React from "react";
 import { NavLink } from "src/components/NavLink";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useCustomClasses } from "src/components/useCustomClasses";
+import { useCustomClasses } from "src/hooks/useCustomClasses";
 import { FormProduct } from "src/components/FormProduct";
 import { ProductApiClient } from "src/client/api/product.client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";

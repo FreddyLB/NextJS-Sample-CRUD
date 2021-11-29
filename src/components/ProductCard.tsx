@@ -7,7 +7,7 @@ import { makeStyles } from "@material-ui/core";
 import { useRouter } from "next/router";
 import Link from "next/link";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   "@keyframes fadeInGrow": {
     from: {
       opacity: 0,

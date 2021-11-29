@@ -8,7 +8,7 @@ import {
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { ImageWithFallback } from "./ImageWithFallback";
-import { useCustomClasses } from "src/components/useCustomClasses";
+import { useCustomClasses } from "src/hooks/useCustomClasses";
 
 export interface ProductDetailsProps {
   product: IProduct;

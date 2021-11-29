@@ -5,7 +5,7 @@ import { IProduct } from "src/shared/models/product.model";
 import { ProductApiClient } from "src/client/api/product.client";
 import AddIcon from "@mui/icons-material/Add";
 import { NavLink } from "src/components/NavLink";
-import { useCustomClasses } from "src/components/useCustomClasses";
+import { useCustomClasses } from "src/hooks/useCustomClasses";
 import { ProductCard } from "src/components/ProductCard";
 import { makeStyles } from "@material-ui/core";
 import { useEffect, useRef, useState } from "react";

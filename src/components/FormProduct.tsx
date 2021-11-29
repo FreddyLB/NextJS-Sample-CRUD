@@ -2,7 +2,7 @@ import { Box, Paper, Button, styled, TextField, Collapse } from "@mui/material";
 import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { useForm, Validate } from "react-hook-form";
-import { useCustomClasses } from "./useCustomClasses";
+import { useCustomClasses } from "../hooks/useCustomClasses";
 import { ImageWithFallback } from "src/components/ImageWithFallback";
 import { checkIsImage } from "@shared/utils/checkIsImage";
 
