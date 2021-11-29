@@ -3,7 +3,7 @@ import { Box, AppBar, Toolbar, Typography, Button } from "@mui/material";
 import Link from "next/link";
 import React from "react";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   appbar: {
     "& h6": {
       fontSize: "1.6rem",
