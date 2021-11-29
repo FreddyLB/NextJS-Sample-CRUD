@@ -1,8 +1,16 @@
 import { Box, Paper, Typography } from "@mui/material";
 import React from "react";
 import { GoogleLoginButton } from "react-social-login-buttons";
+import { useAuth } from "src/hooks/useAuth";
 
 export default function Home() {
+  const { user, loginWithGoogle } = useAuth(); 
+
+  if (user) {
+    console.error("User is already authenticated");
+    return <div>User is already authenticated</div>;
+  }
+
   return (
     <Box
       sx={{
@@ -36,7 +44,7 @@ export default function Home() {
         >
           Login with
         </Typography>
-        <GoogleLoginButton onClick={() => console.log("Google button clicked")}>
+        <GoogleLoginButton onClick={loginWithGoogle}>
           <Typography
             sx={{
               fontFamily: "monospace",
