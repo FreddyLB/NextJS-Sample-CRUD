@@ -4,6 +4,8 @@ import React from "react";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { NavLink } from "./NavLink";
 import { makeStyles } from "@material-ui/core";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const useStyles = makeStyles((theme) => ({
   "@keyframes fadeInGrow": {
@@ -36,72 +38,79 @@ export interface ProductCardProps {
 
 export function ProductCard({ product, index }: ProductCardProps) {
   const classes = useStyles();
-  return (
-    <Paper
-      elevation={3}
-      className={classes.paperCard}
-      sx={{
-        backgroundColor: "#06062c",
-        overflow: "hidden",
-        borderRadius: 3,
-        height: 320,
-        display: "flex",
-        flexDirection: "column",
-        animationDelay: `${(index + 1) * 100}ms !important`,
-      }}
-    >
-      <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
-        <ImageWithFallback
-          src={product.imageUrl!}
-          alt={product.name}
-          className={classes.paperCardImage}
-          objectFit="cover"
-          layout="fill"
-          priority          
-        />
-      </Box>
+  const router = useRouter();
 
-      <Box sx={{ padding: 1, marginTop: "auto" }}>
-        <Typography
-          sx={{
-            fontSize: 25,
-            paddingBottom: 2,
-            fontWeight: "bold",
-            color: "white",
-          }}
-        >
-          {product.name}
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "row",
-            gap: 2,
-          }}
-        >
-          <NavLink
+  return (
+    <Link href={`/products/details/${product.id}`} passHref>
+      <Paper
+        elevation={3}
+        className={classes.paperCard}
+        sx={{
+          backgroundColor: "#06062c",
+          overflow: "hidden",
+          borderRadius: 3,
+          height: 320,
+          display: "flex",
+          flexDirection: "column",
+          animationDelay: `${(index + 1) * 100}ms !important`,
+          cursor: "pointer",
+        }}
+      >
+        <Box sx={{ position: "relative", width: "100%", height: "100%" }}>
+          <ImageWithFallback
+            src={product.imageUrl!}
+            alt={product.name}
+            className={classes.paperCardImage}
+            objectFit="cover"
+            layout="fill"
+            priority
+          />
+        </Box>
+
+        <Box sx={{ padding: 1, marginTop: "auto" }}>
+          <Typography
+            sx={{
+              fontSize: 25,
+              paddingBottom: 2,
+              fontWeight: "bold",
+              color: "white",
+            }}
+          >
+            {product.name}
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 2,
+            }}
+          >
+            {/* <NavLink
             variant="contained"
             color="info"
             href={`/products/details/${product.id}`}
           >
             Details
-          </NavLink>
-          <NavLink
-            variant="contained"
-            color="primary"
-            href={`/products/edit/${product.id}`}
-          >
-            Edit
-          </NavLink>
-          <NavLink
-            variant="contained"
-            color="error"
-            href={`/products/delete/${product.id}`}
-          >
-            Delete
-          </NavLink>
+          </NavLink> */}
+            <NavLink
+              variant="outlined"
+              color="primary"
+              href={`/products/edit/${product.id}`}
+              sx={{ width: "100%" }}
+            >
+              Edit
+            </NavLink>
+            <NavLink
+              variant="outlined"
+              color="error"
+              href={`/products/delete/${product.id}`}
+              sx={{ width: "100%" }}
+            >
+              Delete
+            </NavLink>
+          </Box>
         </Box>
-      </Box>
-    </Paper>
+      </Paper>
+    </Link>
   );
 }
