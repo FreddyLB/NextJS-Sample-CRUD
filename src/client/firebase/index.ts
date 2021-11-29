@@ -1,5 +1,6 @@
 import firebase, { initializeApp } from "firebase/app";
-import { getAnalytics, Analytics } from "firebase/analytics";
+import firebaseAnalytics from "firebase/analytics";
+import { Analytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -18,7 +19,6 @@ let analytics: Analytics | undefined;
 
 if (app == null && analytics == null) {
   app = initializeApp(firebaseConfig);
-  analytics = getAnalytics(app);
   console.log("Initialized!");
 }
 
@@ -26,6 +26,16 @@ export function getFirebaseApp() {
   return app;
 }
 
-export function getFirebaseAnalytics() {
-  return analytics;
+export async function getFirebaseAnalytics(): Promise<Analytics | null> {
+  const isSupported = await firebaseAnalytics.isSupported();
+  
+  if (isSupported) {
+    if (analytics == null) {
+      analytics = firebaseAnalytics.getAnalytics(app);
+    }
+
+    return analytics;
+  }
+
+  return null;
 }
