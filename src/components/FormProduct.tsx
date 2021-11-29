@@ -5,6 +5,11 @@ import { useForm, Validate } from "react-hook-form";
 import { useCustomClasses } from "../hooks/useCustomClasses";
 import { ImageWithFallback } from "src/components/ImageWithFallback";
 import { checkIsImage } from "@shared/utils/checkIsImage";
+import { useAnimationsClases } from "src/hooks/useAnimations";
+import { ArrayUtils } from "@shared/utils/ArrayUtils";
+
+const delaysMs = ArrayUtils.range(1, 10).map((i) => i * 100);
+const delays = delaysMs.map((ms) => `${ms}ms !important`);
 
 const StyledTextField = styled(TextField)({
   color: "white",
@@ -53,6 +58,7 @@ export function FormProduct({
   onSubmit,
 }: FormProductProps) {
   const classes = useCustomClasses();
+  const animations = useAnimationsClases();
   const [imageUrl, setImageUrl] = React.useState<string | undefined>(
     initialValue?.imageUrl
   );
@@ -77,6 +83,7 @@ export function FormProduct({
         <Collapse in={!!imageUrl} collapsedSize={0}>
           <Paper
             elevation={3}
+            className={animations.animateSlideLeftFadeIn}
             sx={{
               width: "100%",
               height: [300, 400],
@@ -84,6 +91,7 @@ export function FormProduct({
               position: "relative",
               overflow: "hidden",
               backgroundColor: "black",
+              animationDelay: delays[0],
             }}
           >
             <ImageWithFallback
@@ -99,7 +107,8 @@ export function FormProduct({
         <StyledTextField
           label="Name"
           autoComplete="off"
-          sx={{ margin: "10px 0" }}
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ margin: "10px 0", animationDelay: delays[1] }}
           {...register("name", { required: true, minLength: 1 })}
           error={!!errors.price}
           helperText={errors.price && "Name is required"}
@@ -108,7 +117,8 @@ export function FormProduct({
         <StyledTextField
           label="Description"
           autoComplete="off"
-          sx={{ margin: "10px 0" }}
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ margin: "10px 0", animationDelay: delays[2] }}
           multiline
           rows={4}
           {...register("description")}
@@ -117,7 +127,8 @@ export function FormProduct({
         <StyledTextField
           label="Image URL"
           autoComplete="off"
-          sx={{ margin: "10px 0" }}
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ margin: "10px 0", animationDelay: delays[3] }}
           {...register("imageUrl", { validate: validateImageUrl })}
           error={!!errors.imageUrl}
           helperText={errors.imageUrl?.message}
@@ -129,7 +140,8 @@ export function FormProduct({
         <StyledTextField
           label="Price"
           type="number"
-          sx={{ margin: "10px 0" }}
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ margin: "10px 0", animationDelay: delays[4] }}
           {...register("price", { required: true, min: 1 })}
           error={!!errors.price}
           helperText={
@@ -175,6 +187,17 @@ const validateImageUrl: Validate<string | undefined> = async (url) => {
 };
 
 function isValidImageURL(url: string) {
-  const imageExtensions =  [".jpg", ".png", ".jpeg", ".bmp", ".webp", ".svg", ".tiff", ".tif", ".gif", ".ico"];
+  const imageExtensions = [
+    ".jpg",
+    ".png",
+    ".jpeg",
+    ".bmp",
+    ".webp",
+    ".svg",
+    ".tiff",
+    ".tif",
+    ".gif",
+    ".ico",
+  ];
   return imageExtensions.some((ext) => url.endsWith(ext));
 }

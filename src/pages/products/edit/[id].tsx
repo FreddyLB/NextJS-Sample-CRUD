@@ -40,7 +40,7 @@ export default function EditProduct({
         Back
       </NavLink>
       <FormProduct
-        buttonText="Edit Product"
+        buttonText="Save Product"
         initialValue={product}
         onSubmit={async (data) => {
           try {

@@ -9,13 +9,19 @@ import { IProduct } from "@shared/models/product.model";
 import React from "react";
 import { ImageWithFallback } from "./ImageWithFallback";
 import { useCustomClasses } from "src/hooks/useCustomClasses";
+import { useAnimationsClases } from "src/hooks/useAnimations";
+import { ArrayUtils } from "@shared/utils/ArrayUtils";
 
 export interface ProductDetailsProps {
   product: IProduct;
 }
 
+const delaysMs = ArrayUtils.range(1, 10).map(i => i * 100);
+const delays = delaysMs.map(ms => `${ms}ms !important`);
+
 export function ProductDetails({ product }: ProductDetailsProps) {
   const classes = useCustomClasses();
+  const animations = useAnimationsClases();
 
   return (
     <Box>
@@ -27,6 +33,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
       >
         <Paper
           elevation={3}
+          className={animations.animateSlideLeftFadeIn}
           sx={{
             width: "100%",
             height: [300, 400],
@@ -34,6 +41,7 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             position: "relative",
             overflow: "hidden",
             backgroundColor: "black",
+            animationDelay: delays[0],
           }}
         >
           <ImageWithFallback
@@ -46,10 +54,33 @@ export function ProductDetails({ product }: ProductDetailsProps) {
             useProxy
           />
         </Paper>
-        <TextWithLabel label="Name" value={product.name} />
-        <TextWithLabel label="Description" value={product.description} />
-        <LinkWithLabel label="Image URL" url={product.imageUrl!} />
-        <TextWithLabel label="Price" value={product.price} />
+        <Box
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ animationDelay: delays[1] }}
+        >
+          <TextWithLabel label="Name" value={product.name} />
+        </Box>
+
+        <Box
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ animationDelay: delays[2] }}
+        >
+          <TextWithLabel label="Description" value={product.description} />
+        </Box>
+
+        <Box
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ animationDelay: delays[3] }}
+        >
+          <LinkWithLabel label="Image URL" url={product.imageUrl!} />
+        </Box>
+
+        <Box
+          className={animations.animateSlideLeftFadeIn}
+          sx={{ animationDelay: delays[4] }}
+        >
+          <TextWithLabel label="Price" value={product.price} />
+        </Box>
       </Box>
     </Box>
   );
