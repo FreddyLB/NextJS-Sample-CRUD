@@ -16,6 +16,7 @@
     "@types/react-animations": "^1.0.0",
     "axios": "^0.24.0",
     "firebase": "^9.5.0",
+    "firebase-admin": "^10.0.0",
     "framer-motion": "^5.3.3",
     "mongoose": "^6.0.13",
     "morgan": "^1.10.0",

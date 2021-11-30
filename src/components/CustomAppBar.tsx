@@ -6,9 +6,10 @@ import { useAuth } from "src/hooks/useAuth";
 import { Logo } from "./Logo";
 
 export function CustomAppBar() {
-  const { user, isLoading, loginWithGoogle, logout } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const router = useRouter();
   const isHome = router.pathname === "/";
+  const showAuthButton = !isLoading && router.isReady && !isHome;
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -26,11 +27,8 @@ export function CustomAppBar() {
             <Logo />
           </Box>
 
-          {!isLoading && user && <AppbarUserDetails user={user} />}
-          {!isLoading && !isHome && user == null && (
-            <AppbarButton text="Login" onClick={loginWithGoogle} />
-          )}
-          {!isLoading && !isHome && user != null && (
+          {!isLoading && user && <AppbarUserDetails user={user} />} 
+          {showAuthButton && user != null && (
             <AppbarButton text="Logout" onClick={logout} />
           )}
         </Toolbar>

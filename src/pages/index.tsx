@@ -4,12 +4,7 @@ import { GoogleLoginButton } from "react-social-login-buttons";
 import { useAuth } from "src/hooks/useAuth";
 
 export default function Home() {
-  const { user, loginWithGoogle } = useAuth(); 
-
-  if (user) {
-    console.error("User is already authenticated");
-    return <div>User is already authenticated</div>;
-  }
+  const { loginWithGoogle } = useAuth(); 
 
   return (
     <Box

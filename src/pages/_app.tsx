@@ -3,7 +3,6 @@ import { AppProps } from "next/app";
 import React from "react";
 import { Layout } from "src/components/Layout";
 import { AuthProvider } from "src/context/AuthContext";
-import { withAuth } from "src/components/withAuth";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -15,4 +14,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default withAuth(MyApp);
+export default MyApp;

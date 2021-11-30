@@ -1,5 +1,5 @@
 import React from "react";
-import { getFirebaseApp } from "src/client/firebase";
+import { getFirebaseApp } from "src/firebase/firebaseClient";
 import { createContext } from "react";
 import * as firebaseAuth from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
@@ -13,11 +13,13 @@ export interface AuthContextProps {
   isLoading: boolean;
 }
 
+const isBrowser = () => typeof window !== "undefined";
+
 export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
 );
 
-export const AuthProvider: React.FC = ({ children }) => { 
+export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = React.useState<FirebaseUser | null>(null);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -26,6 +28,16 @@ export const AuthProvider: React.FC = ({ children }) => {
   const auth = firebaseAuth.getAuth(app);
 
   auth.onAuthStateChanged((user) => setUser(user));
+
+  auth.onIdTokenChanged((user) => {
+    if (isBrowser()) {
+      if (user) {
+        document.cookie = "mycustomcookie=hello;max-age=3600";
+      } else {
+        document.cookie = "";
+      }
+    }
+  });
 
   const loginWithGoogle = async () => {
     setIsLoading(true);
