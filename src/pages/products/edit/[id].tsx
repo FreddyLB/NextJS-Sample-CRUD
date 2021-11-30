@@ -6,10 +6,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useCustomClasses } from "src/hooks/useCustomClasses";
 import { FormProduct } from "src/components/FormProduct";
 import { ProductApiClient } from "src/client/api/product.client";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { InferGetServerSidePropsType } from "next";
 import { IProduct } from "@shared/models/product.model";
 import { useRouter } from "next/router";
-import { withAuth } from "@server/utils/withAuth";
+import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 
 const productClient = new ProductApiClient();
 
@@ -17,16 +17,18 @@ type Data = {
   product: IProduct;
 };
 
-export const getServerSideProps = withAuth<Data>(async (context) => {
-  const { id } = context.query;
+export const getServerSideProps = withAuthGetServerSideProps<Data>(
+  async (context) => {
+    const { id } = context.query;
 
-  const product = await productClient.getById(String(id));
-  return {
-    props: {
-      product,
-    },
-  };
-});
+    const product = await productClient.getById(String(id));
+    return {
+      props: {
+        product,
+      },
+    };
+  }
+);
 
 export default function EditProduct({
   product,
@@ -37,7 +39,11 @@ export default function EditProduct({
   return (
     <Container>
       <PageTitle variant="h4" color="white" title="Edit Product" />
-      <NavLink href="/products" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
+      <NavLink
+        href="/products"
+        className={classes.blackBtn}
+        sx={{ margin: "20px 0" }}
+      >
         <ArrowBackIcon />
         Back
       </NavLink>

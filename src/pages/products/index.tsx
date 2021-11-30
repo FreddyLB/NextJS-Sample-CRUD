@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from "react";
 import React from "react";
 import { SearchTextField } from "src/components/SearchTextField";
 import { useDebounce } from "src/hooks/useDebounce";
+import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 
 const useClasses = makeStyles(() => ({
   grid: {
@@ -27,13 +28,13 @@ type Data = {
   result: PageResult<IProduct>;
 };
 
-export const getServerSideProps: GetServerSideProps<Data> = async () => {
+export const getServerSideProps = withAuthGetServerSideProps<Data>(async () => {
   const result = await productClient.getAll();
 
   return {
     props: { result },
   };
-};
+});
 
 function ListProducts({
   result,

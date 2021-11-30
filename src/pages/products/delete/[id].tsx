@@ -5,10 +5,11 @@ import { NavLink } from "src/components/NavLink";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useCustomClasses } from "src/hooks/useCustomClasses";
 import { ProductApiClient } from "src/client/api/product.client";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { InferGetServerSidePropsType } from "next";
 import { IProduct } from "@shared/models/product.model";
 import { useRouter } from "next/router";
 import { ProductDetails } from "src/components/ProductDetails";
+import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 
 const productClient = new ProductApiClient();
 
@@ -16,7 +17,7 @@ type Data = {
   product: IProduct;
 };
 
-export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
+export const getServerSideProps = withAuthGetServerSideProps<Data>(async (context) => {
   const { id } = context.query;
   const product = await productClient.getById(String(id));
   return {
@@ -24,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
       product,
     },
   };
-};
+});
 
 export default function DeleteProduct({
   product,

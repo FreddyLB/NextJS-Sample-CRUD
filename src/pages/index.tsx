@@ -1,10 +1,13 @@
 import { Box, Paper, Typography } from "@mui/material";
-import React from "react";
 import { GoogleLoginButton } from "react-social-login-buttons";
+import { withAuth } from "src/auth/withAuth";
+import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 import { useAuth } from "src/hooks/useAuth";
 
-export default function Home() {
-  const { loginWithGoogle } = useAuth(); 
+export const getServerSideProps = withAuthGetServerSideProps();
+
+function Home() {
+  const { loginWithGoogle } = useAuth();
 
   return (
     <Box
@@ -13,7 +16,7 @@ export default function Home() {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: [5, 10]
+        marginTop: [5, 10],
       }}
     >
       <Paper
@@ -25,8 +28,8 @@ export default function Home() {
           flexDirection: "column",
           justifyContent: "center",
           alignItems: "center",
-          borderRadius: 3,    
-          width: ["100%", "60%","30%"],    
+          borderRadius: 3,
+          width: ["100%", "60%", "30%"],
         }}
       >
         <Typography
@@ -39,7 +42,12 @@ export default function Home() {
         >
           Login with
         </Typography>
-        <GoogleLoginButton onClick={loginWithGoogle}>
+        <GoogleLoginButton
+          onClick={() => {
+            //window.location.assign("localhost:3000/products")
+            loginWithGoogle();
+          }}
+        >
           <Typography
             sx={{
               fontFamily: "monospace",
@@ -53,3 +61,5 @@ export default function Home() {
     </Box>
   );
 }
+
+export default withAuth(Home);

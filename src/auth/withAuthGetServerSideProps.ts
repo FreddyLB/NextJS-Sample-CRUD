@@ -1,13 +1,11 @@
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, GetServerSidePropsResult } from "next";
 import { getFirebaseAdmin } from "src/firebase/firebaseAdmin";
 import { getAuth } from "firebase-admin/auth";
+import { HOME_URL, LOGIN_URL } from "./constants";
 
-const LOGIN_URL = "/";
-const HOME_URL = "/products";
-
-export function withAuth<
+export function withAuthGetServerSideProps<
   P extends { [key: string]: any } = { [key: string]: any }
->(cb: GetServerSideProps<P>): GetServerSideProps<P> {
+>(cb?: GetServerSideProps<P>): GetServerSideProps<P> {
   return async (context) => {
     const firebase = getFirebaseAdmin();
     const auth = getAuth(firebase);
@@ -20,18 +18,32 @@ export function withAuth<
       return { redirect: { destination: LOGIN_URL, permanent: false } };
     }
 
+    let isAuthenticated = false;
+
     if (token) {
       try {
         // An error is throw if the token is invalid
         await auth.verifyIdToken(token);
+        isAuthenticated = true;
       } catch (err) {
         console.error(err);
-        return { redirect: { destination: HOME_URL, permanent: true } };
       }
-    } else {
+    }
+
+    // If is authenticated and is in login page, redirect to home page
+    if (isAuthenticated && url === LOGIN_URL) {
+      return { redirect: { destination: HOME_URL, permanent: true } };
+    }
+
+    // If is not authenticated and is in other page, redirect to login page
+    if (!isAuthenticated && url !== LOGIN_URL) {
       return { redirect: { destination: LOGIN_URL, permanent: false } };
     }
 
-    return await cb(context);
+    if (cb) {
+      return await cb(context);
+    }
+
+    return { props: {} } as GetServerSidePropsResult<P>;
   };
 }

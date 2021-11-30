@@ -12,6 +12,7 @@ import {
 } from "next";
 import { IProduct } from "@shared/models/product.model";
 import { ProductDetails } from "src/components/ProductDetails";
+import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 
 const productClient = new ProductApiClient();
 
@@ -19,7 +20,7 @@ type Data = {
   product: IProduct;
 };
 
-export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
+export const getServerSideProps = withAuthGetServerSideProps<Data>(async (context) => {
   const { id } = context.query;
   const product = await productClient.getById(String(id));
   return {
@@ -27,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
       product,
     },
   };
-};
+});
 
 export default function ViewProduct({
   product,

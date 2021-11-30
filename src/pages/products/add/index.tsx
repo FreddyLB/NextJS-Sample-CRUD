@@ -7,8 +7,11 @@ import { useCustomClasses } from "src/hooks/useCustomClasses";
 import { FormProduct } from "src/components/FormProduct";
 import { ProductApiClient } from "src/client/api/product.client";
 import { useRouter } from "next/router";
+import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 
 const productClient = new ProductApiClient();
+
+export const getServerSideProps = withAuthGetServerSideProps();
 
 export default function AddProduct() {
   const classes = useCustomClasses();

@@ -27,9 +27,15 @@ export function CustomAppBar() {
             <Logo />
           </Box>
 
-          {!isLoading && user && <AppbarUserDetails user={user} />} 
+          {!isLoading && user && <AppbarUserDetails user={user} />}
           {showAuthButton && user != null && (
-            <AppbarButton text="Logout" onClick={logout} />
+            <AppbarButton
+              text="Logout"
+              onClick={() => {
+                logout();
+                router.replace("/");
+              }}
+            />
           )}
         </Toolbar>
       </AppBar>
