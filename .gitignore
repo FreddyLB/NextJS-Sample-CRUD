@@ -20,7 +20,8 @@
 *.pem
 
 # private
-private/
+private/*
+!private/.gitkeep
 
 # debug
 npm-debug.log*

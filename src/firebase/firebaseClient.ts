@@ -19,7 +19,7 @@ let analytics: Analytics | undefined;
 
 if (app == null && analytics == null) {
   app = initializeApp(firebaseConfig);
-  console.log("Initialized!");
+  console.log("Initialized client side firebase");
 }
 
 export function getFirebaseApp() {

@@ -9,6 +9,7 @@ import { ProductApiClient } from "src/client/api/product.client";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import { IProduct } from "@shared/models/product.model";
 import { useRouter } from "next/router";
+import { withAuth } from "@server/utils/withAuth";
 
 const productClient = new ProductApiClient();
 
@@ -16,15 +17,16 @@ type Data = {
   product: IProduct;
 };
 
-export const getServerSideProps: GetServerSideProps<Data> = async (context) => {
+export const getServerSideProps = withAuth<Data>(async (context) => {
   const { id } = context.query;
+
   const product = await productClient.getById(String(id));
   return {
     props: {
       product,
     },
   };
-};
+});
 
 export default function EditProduct({
   product,

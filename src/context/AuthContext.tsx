@@ -3,6 +3,7 @@ import { getFirebaseApp } from "src/firebase/firebaseClient";
 import { createContext } from "react";
 import * as firebaseAuth from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
+import nookies from "nookies";
 
 export type FirebaseUser = firebaseAuth.User;
 
@@ -29,12 +30,14 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   auth.onAuthStateChanged((user) => setUser(user));
 
-  auth.onIdTokenChanged((user) => {
+  auth.onIdTokenChanged(async (user) => {
+    
     if (isBrowser()) {
       if (user) {
-        document.cookie = "mycustomcookie=hello;max-age=3600";
+        const token = await user.getIdToken();
+        nookies.set(null, "token", token)
       } else {
-        document.cookie = "";
+        nookies.set(null, "token", "")
       }
     }
   });
