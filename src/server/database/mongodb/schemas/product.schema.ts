@@ -1,4 +1,4 @@
-import mongoose, { Types, Schema } from "mongoose";
+import mongoose, { SchemaTypes, Schema } from "mongoose";
 import { ProductDocument, ProductModel } from "./product.types";
 
 const productSchema = new Schema<ProductDocument, ProductModel>(
@@ -21,7 +21,14 @@ const productSchema = new Schema<ProductDocument, ProductModel>(
       required: true,
       validate: (value: number) => value > 0,
     },
-    tags: [{ type: Types.ObjectId, ref: "Tag" }],
+    tags: {
+      type: [{ type: SchemaTypes.ObjectId, required: true }],
+      default: [],
+    },
+    user: {
+      type: SchemaTypes.ObjectId,
+      required: true,
+    },
     createdAt: {
       type: Date,
       immutable: true,

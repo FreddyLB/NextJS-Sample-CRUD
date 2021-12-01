@@ -2,8 +2,8 @@ import { mongodb } from "@server/database/mongodb/middleware";
 import morgan from "morgan";
 import { IRepository, PageResult } from "@server/repositories/base/repository";
 import { buildPaginationOptions } from "@server/repositories/helper";
-import { NextApiRequest, NextApiResponse } from "next";
-import { ErrorHandler } from "next-connect";
+import { NextApiResponse } from "next";
+import { ErrorHandler, Middleware } from "next-connect";
 import withApiRoutes, {
   RouteController,
   NextApiRequestWithParams,
@@ -13,51 +13,68 @@ import withApiRoutes, {
 const DEFAULT_BASE_PATH = "/api";
 const DEFAULT_ID_NAME = "id";
 
-type RestEndpoint<TRepo extends IRepository<TEntity>, TEntity, TReturn> = (
-  repository: TRepo,
-  req: NextApiRequestWithParams,
-  res: NextApiResponse
-) => Promise<TReturn> | TReturn;
+type RestEndpoint<
+  TRepo extends IRepository<TEntity>,
+  TEntity,
+  TReturn,
+  Req extends NextApiRequestWithParams = NextApiRequestWithParams,
+  Res extends NextApiResponse = NextApiResponse
+> = (repository: TRepo, req: Req, res: Res) => Promise<TReturn> | TReturn;
 
-type RouteRestEndPoint<TRepo extends IRepository<T>, T> = Record<
-  string,
-  RestEndpoint<TRepo, T, any>
->;
+type RouteRestEndPoint<
+  TRepo extends IRepository<TEntity>,
+  TEntity,
+  Req extends NextApiRequestWithParams = NextApiRequestWithParams,
+  Res extends NextApiResponse = NextApiResponse
+> = Record<string, RestEndpoint<TRepo, TEntity, any, Req, Res>>;
 
 export interface NamingConventions {
   id?: string;
 }
 
-export interface RestApiConfig<TRepo extends IRepository<T>, T> {
+export interface RestApiConfig<
+  TRepo extends IRepository<TEntity>,
+  TEntity,
+  Req extends NextApiRequestWithParams = NextApiRequestWithParams,
+  Res extends NextApiResponse = NextApiResponse
+> {
   route: string;
   baseRoute?: string;
   namingConventions?: NamingConventions;
-  customEndpoints?: CustomApiEndpoints<TRepo, T>;
-  onError?: ErrorHandler<NextApiRequest, NextApiResponse>;
-  getAll?: RestEndpoint<TRepo, T, PageResult<T>> | null;
-  getById?: RestEndpoint<TRepo, T, T | null> | null;
-  create?: RestEndpoint<TRepo, T, T> | null;
-  update?: RestEndpoint<TRepo, T, T> | null;
-  partialUpdate?: RestEndpoint<TRepo, T, T> | null;
-  delete?: RestEndpoint<TRepo, T, T> | null;
+  customEndpoints?: CustomApiEndpoints<TRepo, TEntity>;
+  middlewares?: Middleware<Req, Res>[];
+  onError?: ErrorHandler<Req, Res>;
+  getAll?: RestEndpoint<TRepo, TEntity, PageResult<TEntity>, Req, Res> | null;
+  getById?: RestEndpoint<TRepo, TEntity, TEntity | null, Req, Res> | null;
+  create?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;
+  update?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;
+  partialUpdate?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;
+  delete?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;
 }
 
-export interface CustomApiEndpoints<TRepo extends IRepository<T>, T> {
-  get?: RouteRestEndPoint<TRepo, T>;
-  post?: RouteRestEndPoint<TRepo, T>;
-  put?: RouteRestEndPoint<TRepo, T>;
-  delete?: RouteRestEndPoint<TRepo, T>;
-  patch?: RouteRestEndPoint<TRepo, T>;
-  options?: RouteRestEndPoint<TRepo, T>;
-  trace?: RouteRestEndPoint<TRepo, T>;
-  head?: RouteRestEndPoint<TRepo, T>;
-  all?: RouteRestEndPoint<TRepo, T>;
+export interface CustomApiEndpoints<
+  TRepo extends IRepository<TEntity>,
+  TEntity,
+  Req extends NextApiRequestWithParams = NextApiRequestWithParams,
+  Res extends NextApiResponse = NextApiResponse
+> {
+  get?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  post?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  put?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  delete?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  patch?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  options?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  trace?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  head?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
+  all?: RouteRestEndPoint<TRepo, TEntity, Req, Res>;
 }
 
 // prettier-ignore
-export function withRestApi<TEntity, TRepo extends IRepository<TEntity>>(
+export function withRestApi<TEntity, TRepo extends IRepository<TEntity>,
+Req extends NextApiRequestWithParams = NextApiRequestWithParams,
+Res extends NextApiResponse = NextApiResponse>(
   repository: TRepo,
-  config: RestApiConfig<TRepo, TEntity>
+  config: RestApiConfig<TRepo, TEntity, Req, Res>
 ) {
   config.customEndpoints = config.customEndpoints || {};
   config.namingConventions = config.namingConventions || {};
@@ -69,9 +86,13 @@ export function withRestApi<TEntity, TRepo extends IRepository<TEntity>>(
   validateRoutePath(config.route);
 
   const path = `${basePath}${config.route}`;
-  const controller = withApiRoutes<NextApiRequestWithParams, NextApiResponse>({ onError: config.onError })
+  const controller = withApiRoutes<Req, Res>({ onError: config.onError })
     .use(mongodb())
     .use(morgan("dev"));
+
+  if (config.middlewares) {
+    config.middlewares.forEach((middleware) => controller.use(middleware));
+  }
 
   // Configure custom endpoints
   for (const method in config.customEndpoints) {
@@ -151,18 +172,23 @@ function getByIdEndpoint<TRepo extends IRepository<T>, T>(): RestEndpoint<TRepo,
   };
 }
 
-// prettier-ignore
-function createEndpoint<TRepo extends IRepository<T>, T>(config: RestApiConfig<TRepo, T>): RestEndpoint<TRepo, T, void> {
+function createEndpoint<
+  TRepo extends IRepository<TEntity>,
+  TEntity,
+  Req extends NextApiRequestWithParams = NextApiRequestWithParams,
+  Res extends NextApiResponse = NextApiResponse
+>(
+  config: RestApiConfig<TRepo, TEntity, Req, Res>
+): RestEndpoint<TRepo, TEntity, void, Req, Res> {
   return async (repo, req, res) => {
     const newEntity = req.body;
 
     if (Array.isArray(newEntity)) {
       const result = await repo.createMany(newEntity);
       return res.status(201).json(result);
-    } 
-    else {
+    } else {
       const result = await repo.create(newEntity);
-      const id = config.namingConventions!.id as keyof T;
+      const id = config.namingConventions!.id as keyof TEntity;
       res.setHeader("Location", `${req.url}/${result[id]}`);
       return res.status(201).json(result);
     }
@@ -170,29 +196,29 @@ function createEndpoint<TRepo extends IRepository<T>, T>(config: RestApiConfig<T
 }
 
 // prettier-ignore
-function updateEndpoint<TRepo extends IRepository<T>, T>(): RestEndpoint<TRepo, T, void> {
+function updateEndpoint<TRepo extends IRepository<TEntity>, TEntity>(): RestEndpoint<TRepo, TEntity, void> {
   return async (repo, req, res) => {
     const params = req.params || {};
     const id = params.id;
-    const entityUpdate = req.body as unknown as T;
+    const entityUpdate = req.body as unknown as TEntity;
     const result = await repo.update(id, entityUpdate);
     return res.json(result);
   };
 }
 
 // prettier-ignore
-function partialUpdateEndpoint<TRepo extends IRepository<T>, T>(): RestEndpoint<TRepo, T, void> {
+function partialUpdateEndpoint<TRepo extends IRepository<TEntity>, TEntity>(): RestEndpoint<TRepo, TEntity, void> {
   return async (repo, req, res) => {
     const params = req.params || {};
     const id = params.id;
-    const entityUpdate = req.body as unknown as T;
+    const entityUpdate = req.body as unknown as TEntity;
     const result = await repo.partialUpdate(id, entityUpdate);
     return res.json(result);
   };
 }
 
 // prettier-ignore
-function deleteEndpoint<TRepo extends IRepository<T>, T>(): RestEndpoint<TRepo, T, void> {
+function deleteEndpoint<TRepo extends IRepository<TEntity>, TEntity>(): RestEndpoint<TRepo, TEntity, void> {
   return async (repo, req, res) => {
     const params = req.params || {};
     const id = params.id;

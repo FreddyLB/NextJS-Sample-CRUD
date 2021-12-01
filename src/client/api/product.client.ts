@@ -25,12 +25,12 @@ export class ProductApiClient
 
   async search(
     options: SearchQueryOptions,
-    config: AxiosRequestConfig<IProduct> = {}
+    config?: AxiosRequestConfig<IProduct>
   ): Promise<PageResult<IProduct>> {
+    const searchString = options.search.trim();
     const page = options.page || 1;
     const pageSize = options.pageSize || 10;
-    const search =
-      options.search.trim().length > 0 ? options.search : undefined;
+    const search = searchString.length > 0 ? searchString : undefined;
 
     const result = await this.client.get<PageResult<IProduct>>(`/`, {
       ...config,

@@ -1,4 +1,7 @@
-import { PageResult } from "@server/repositories/base/repository";
+import {
+  EMPTY_PAGE_RESULT,
+  PageResult,
+} from "@server/repositories/base/repository";
 import { Container, Box, Typography } from "@mui/material";
 import { InferGetServerSidePropsType } from "next";
 import { IProduct } from "src/shared/models/product.model";
@@ -13,6 +16,7 @@ import React from "react";
 import { SearchTextField } from "src/components/SearchTextField";
 import { useDebounce } from "src/hooks/useDebounce";
 import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
+import ErrorPage from "../_error";
 
 const useClasses = makeStyles(() => ({
   grid: {
@@ -26,18 +30,26 @@ const productClient = new ProductApiClient();
 
 type Data = {
   result: PageResult<IProduct>;
+  errorCode?: number;
 };
 
 export const getServerSideProps = withAuthGetServerSideProps<Data>(async () => {
-  const result = await productClient.getAll();
-
-  return {
-    props: { result },
-  };
+  try {
+    const result = await productClient.getAll();
+    return { props: { result } };
+  } catch (e: any) {
+    return {
+      props: {
+        result: EMPTY_PAGE_RESULT,
+        errorCode: e.response?.status,
+      },
+    };
+  }
 });
 
 function ListProducts({
   result,
+  errorCode,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [products, setProducts] = useState<IProduct[]>(result.data);
   const [search, setSearch] = useState("");
@@ -58,6 +70,10 @@ function ListProducts({
 
     result.then((res) => setProducts(res.data));
   }, [debouncedSearch]);
+
+  if (errorCode) {
+    return <ErrorPage statusCode={errorCode} />;
+  }
 
   const CenterText = function CenterText() {
     if (result.data.length === 0) {
@@ -136,7 +152,11 @@ function PageCenterText({ text }: PageCenterTextFProps) {
         userSelect: "none",
       }}
     >
-      <Typography variant="h3" color="white" sx={{ fontFamily: "monospace" }}>
+      <Typography
+        variant="h4"
+        color="white"
+        sx={{ fontFamily: "monospace", opacity: 0.3 }}
+      >
         {text}
       </Typography>
     </Box>

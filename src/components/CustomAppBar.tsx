@@ -45,7 +45,11 @@ export function CustomAppBar() {
 
 function AppbarButton(props: { text: string; onClick: () => void }) {
   return (
-    <Button color="inherit" onClick={props.onClick}>
+    <Button
+      color="inherit"
+      onClick={props.onClick}
+      sx={{ fontFamily: "monospace", fontSize: "calc(6px + 1vw)" }}
+    >
       {props.text}
     </Button>
   );
@@ -55,7 +59,14 @@ function AppbarUserDetails(props: { user: FirebaseUser }) {
   const { user } = props;
 
   return (
-    <Typography variant="h6" sx={{ color: "red", fontFamily: "monospace" }}>
+    <Typography
+      variant="h6"
+      sx={{
+        color: "red",
+        fontFamily: "monospace",
+        fontSize: "calc(8px + 1vw)",
+      }}
+    >
       {user.displayName} -
     </Typography>
   );

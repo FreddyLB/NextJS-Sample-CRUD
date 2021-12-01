@@ -6,7 +6,7 @@ import React from "react";
 const useStyles = makeStyles(() => ({
   appbar: {
     "& h6": {
-      fontSize: "1.6rem",
+      fontSize: "calc(16px + 1vw)",
       fontFamily: "monospace",
       display: "inline",
       transition: "0.3s color",

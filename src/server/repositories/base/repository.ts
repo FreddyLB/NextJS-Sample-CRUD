@@ -1,3 +1,10 @@
+export const EMPTY_PAGE_RESULT: PageResult<any> = Object.freeze({
+  data: [],
+  totalItems: 0,
+  currentPage: 0,
+  pageSize: 0,
+  totalPages: 0,
+});
 export interface PageResult<T> {
   data: T[];
   totalItems: number;

@@ -10,6 +10,7 @@ export type FirebaseUser = firebaseAuth.User;
 
 export interface AuthContextProps {
   user: FirebaseUser | null;
+  token: string | null;
   loginWithGoogle: () => void;
   logout: () => void;
   isLoading: boolean;
@@ -21,6 +22,7 @@ export const AuthContext = createContext<AuthContextProps>(
 
 export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // To prevent NextJS to run client-side firebase on the server
@@ -49,10 +51,12 @@ export const AuthProvider: React.FC = ({ children }) => {
   auth.onIdTokenChanged(async (user) => {
     if (isBrowser()) {
       if (user) {
-        const token = await user.getIdToken();
+        const token = await user.getIdToken();        
         nookies.set(null, "token", token);
+        setToken(token);
       } else {
         nookies.set(null, "token", "");
+        setToken(null);
       }
     }
   });
@@ -80,6 +84,7 @@ export const AuthProvider: React.FC = ({ children }) => {
     <AuthContext.Provider
       value={{
         user,
+        token,
         loginWithGoogle,
         logout,
         isLoading,

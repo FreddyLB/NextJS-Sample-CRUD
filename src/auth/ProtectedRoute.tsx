@@ -9,42 +9,42 @@ export const ProtectedRoute: React.FC = ({ children }) => {
   const [isRedirecting, setIsRedirecting] = useState(true);
   const { user, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (isLoading) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     return;
+  //   }
 
-    let isMounted = true;
+  //   let isMounted = true;
 
-    const redirecting = (value: boolean) => {
-      if (isMounted) {
-        setIsRedirecting(value);
-      }
-    };
+  //   const redirecting = (value: boolean) => {
+  //     if (isMounted) {
+  //       setIsRedirecting(value);
+  //     }
+  //   };
 
-    redirecting(true);
+  //   redirecting(true);
 
-    const redirect = async () => {
-      if (user == null && router.pathname !== LOGIN_URL) {
-        await router.replace(LOGIN_URL);
-        redirecting(false);
-      } else if (user != null && router.pathname === LOGIN_URL) {
-        await router.replace(HOME_URL);
-        redirecting(false);
-      } else {
-        redirecting(false);
-      }
-    };
+  //   const redirect = async () => {
+  //     if (user == null && router.pathname !== LOGIN_URL) {
+  //       await router.replace(LOGIN_URL);
+  //       redirecting(false);
+  //     } else if (user != null && router.pathname === LOGIN_URL) {
+  //       await router.replace(HOME_URL);
+  //       redirecting(false);
+  //     } else {
+  //       redirecting(false);
+  //     }
+  //   };
 
-    redirect();
-    return () => {
-      isMounted = false;
-    };
-  }, [isLoading, isRedirecting, router, user]);
+  //   redirect();
+  //   return () => {
+  //     isMounted = false;
+  //   };
+  // }, [isLoading, isRedirecting, router, user]);
 
-  if (isLoading || isRedirecting) {
-    return <Loading sx={{ marginTop: "10%" }} />;
-  }
+  // if (isLoading || isRedirecting) {
+  //   return <Loading sx={{ marginTop: "10%" }} />;
+  // }
 
   return <>{children}</>;
 };
