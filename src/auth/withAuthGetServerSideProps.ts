@@ -3,6 +3,8 @@ import { getFirebaseAdmin } from "src/firebase/firebaseAdmin";
 import { getAuth } from "firebase-admin/auth";
 import { HOME_URL, LOGIN_URL } from "./constants";
 
+const EMPTY_PROPS: GetServerSidePropsResult<any> = Object.freeze({ props: {} });
+
 export function withAuthGetServerSideProps<
   P extends { [key: string]: any } = { [key: string]: any }
 >(cb?: GetServerSideProps<P>): GetServerSideProps<P> {
@@ -44,6 +46,6 @@ export function withAuthGetServerSideProps<
       return await cb(context);
     }
 
-    return { props: {} } as GetServerSidePropsResult<P>;
+    return EMPTY_PROPS;
   };
 }

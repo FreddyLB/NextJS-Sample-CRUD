@@ -29,7 +29,7 @@ function Home() {
           justifyContent: "center",
           alignItems: "center",
           borderRadius: 3,
-          width: ["100%", "60%", "30%"],
+          width: ["100%", "60%", "40%"],
         }}
       >
         <Typography
@@ -42,12 +42,7 @@ function Home() {
         >
           Login with
         </Typography>
-        <GoogleLoginButton
-          onClick={() => {
-            //window.location.assign("localhost:3000/products")
-            loginWithGoogle();
-          }}
-        >
+        <GoogleLoginButton onClick={loginWithGoogle}>
           <Typography
             sx={{
               fontFamily: "monospace",

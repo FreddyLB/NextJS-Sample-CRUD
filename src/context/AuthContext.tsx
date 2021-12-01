@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { getFirebaseApp } from "src/firebase/firebaseClient";
 import { createContext } from "react";
 import * as firebaseAuth from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import nookies from "nookies";
+import { isBrowser, isServer } from "@shared/utils/Utils";
+import { useLocalStorageItem } from "src/hooks/useStorageItem";
 
 export type FirebaseUser = firebaseAuth.User;
 
@@ -14,27 +16,19 @@ export interface AuthContextProps {
   isLoading: boolean;
 }
 
-const isBrowser = () => typeof window !== "undefined";
-
 export const AuthContext = createContext<AuthContextProps>(
   {} as AuthContextProps
 );
 
-function setIsRedirecting(value: boolean): void {
-  if (isBrowser()) {
-    localStorage.setItem("isRedirecting", value.toString());
-  }
-}
-
-function getIsRedirecting() {
-  if (isBrowser()) {
-    return localStorage.getItem("isRedirecting") === "true";
-  }
-}
-
 export const AuthProvider: React.FC = ({ children }) => {
   const [user, setUser] = React.useState<FirebaseUser | null>(null);
-  const [isLoading, setIsLoading] = React.useState(getIsRedirecting() || false);
+  const isRedirecting = useLocalStorageItem("is-firebase-redirecting", false);
+  const [isLoading, setIsLoading] = React.useState(!!isRedirecting.value);
+
+  // To prevent NextJS to run client-side firebase on the server
+  if (!isBrowser()) {
+    return <AuthContext.Provider value={{} as any}>{children}</AuthContext.Provider>;
+  }
 
   const googleProvider = new GoogleAuthProvider();
   const app = getFirebaseApp();
@@ -65,7 +59,7 @@ export const AuthProvider: React.FC = ({ children }) => {
 
   const loginWithGoogle = () => {
     setIsLoading(true);
-    setIsRedirecting(true);
+    isRedirecting.set(true);
 
     const loginAsync = async () => {
       await firebaseAuth.signInWithRedirect(auth, googleProvider);
@@ -79,7 +73,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         }
       } finally {
         setIsLoading(false);
-        setIsRedirecting(true);
+        isRedirecting.remove();
       }
     };
 

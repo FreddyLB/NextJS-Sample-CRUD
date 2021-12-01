@@ -1,4 +1,3 @@
-import { Box, CircularProgress } from "@mui/material";
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
 import { Loading } from "src/components/Loading";
@@ -13,28 +12,27 @@ export const ProtectedRoute: React.FC = ({ children }) => {
   useEffect(() => {
     let isMounted = true;
 
-    // const isRedirecting = (value: boolean) => {
-    //   if (isMounted) {
-    //     setIsRedirecting(value);
-    //   }
-    // }
+    const redirecting = (value: boolean) => {
+      if (isMounted) {
+        setIsRedirecting(value);
+      }
+    };
 
-    if (isMounted) {
-      const redirect = async () => {
-        if (user == null && router.pathname !== LOGIN_URL) {
-          await router.replace(LOGIN_URL);
-          setIsRedirecting(false);
-        } else if (user != null && router.pathname === LOGIN_URL) {
-          await router.replace(HOME_URL);
-          setIsRedirecting(false);
-        } else {
-          setIsRedirecting(false);
-        }
-      };
+    redirecting(true);
 
-      redirect();
-    }
+    const redirect = async () => {
+      if (user == null && router.pathname !== LOGIN_URL) {
+        await router.replace(LOGIN_URL);
+        redirecting(false);
+      } else if (user != null && router.pathname === LOGIN_URL) {
+        await router.replace(HOME_URL);
+        redirecting(false);
+      } else {
+        redirecting(false);
+      }
+    };
 
+    redirect();
     return () => {
       isMounted = false;
     };
