@@ -77,6 +77,11 @@ export abstract class MongoRepository<TEntity, TModel extends Model<TEntity>>
     return await this.model.create(entity);
   }
 
+  async createMany(entities: Partial<TEntity>[]): Promise<TEntity[]> {
+    const result = await this.model.create(entities);
+    return result;
+  }
+
   async update(id: string, entity: Partial<TEntity>): Promise<TEntity> {
     let entityToUpdate = await this.model.findById(id);
 

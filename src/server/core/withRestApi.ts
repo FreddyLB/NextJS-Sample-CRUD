@@ -152,7 +152,7 @@ function getByIdEndpoint<TRepo extends IRepository<T>, T>(): RestEndpoint<TRepo,
 }
 
 // prettier-ignore
-function createEndpoint<TRepo extends IRepository<T>, T, TKey>(config: RestApiConfig<TRepo, T>): RestEndpoint<TRepo, T, void> {
+function createEndpoint<TRepo extends IRepository<T>, T>(config: RestApiConfig<TRepo, T>): RestEndpoint<TRepo, T, void> {
   return async (repo, req, res) => {
     const result = await repo.create(req.body);
     const id = config.namingConventions!.id as keyof T;

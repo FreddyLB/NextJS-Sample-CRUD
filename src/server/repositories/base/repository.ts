@@ -37,6 +37,7 @@ export interface IReadRepository<TEntity> {
 
 export interface IWriteRepository<TEntity> {
   create(entity: Partial<TEntity>): Promise<TEntity>;
+  createMany(entities: Partial<TEntity>[]): Promise<TEntity[]>;
   update(id: string, entity: Partial<TEntity>): Promise<TEntity>;
   partialUpdate(id: string, entity: Partial<TEntity>): Promise<TEntity>;
   delete(id: string): Promise<TEntity>;
