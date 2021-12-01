@@ -154,10 +154,18 @@ function getByIdEndpoint<TRepo extends IRepository<T>, T>(): RestEndpoint<TRepo,
 // prettier-ignore
 function createEndpoint<TRepo extends IRepository<T>, T>(config: RestApiConfig<TRepo, T>): RestEndpoint<TRepo, T, void> {
   return async (repo, req, res) => {
-    const result = await repo.create(req.body);
-    const id = config.namingConventions!.id as keyof T;
-    res.setHeader("Location", `${req.url}/${result[id]}`);
-    return res.status(201).json(result);
+    const newEntity = req.body;
+
+    if (Array.isArray(newEntity)) {
+      const result = await repo.createMany(newEntity);
+      return res.status(201).json(result);
+    } 
+    else {
+      const result = await repo.create(newEntity);
+      const id = config.namingConventions!.id as keyof T;
+      res.setHeader("Location", `${req.url}/${result[id]}`);
+      return res.status(201).json(result);
+    }
   };
 }
 
