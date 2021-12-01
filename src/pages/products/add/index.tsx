@@ -8,12 +8,11 @@ import { FormProduct } from "src/components/FormProduct";
 import { ProductApiClient } from "src/client/api/product.client";
 import { useRouter } from "next/router";
 import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
+import { withAuth } from "src/auth/withAuth";
 
 const productClient = new ProductApiClient();
 
-export const getServerSideProps = withAuthGetServerSideProps();
-
-export default function AddProduct() {
+function AddProduct() {
   const classes = useCustomClasses();
   const router = useRouter();
 
@@ -38,3 +37,5 @@ export default function AddProduct() {
     </Container>
   );
 }
+
+export default withAuth(AddProduct);

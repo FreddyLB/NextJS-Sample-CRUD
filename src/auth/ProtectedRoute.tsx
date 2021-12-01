@@ -39,11 +39,7 @@ export const ProtectedRoute: React.FC = ({ children }) => {
   }, [isLoading, isRedirecting, router, user]);
 
   if (isLoading || isRedirecting) {
-    return <Loading />;
-  }
-
-  if (user != null) {
-    return <></>;
+    return <Loading sx={{ marginTop: "10%" }} />;
   }
 
   return <>{children}</>;

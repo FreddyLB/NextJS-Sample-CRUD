@@ -1,10 +1,7 @@
 import { Box, Paper, Typography } from "@mui/material";
 import { GoogleLoginButton } from "react-social-login-buttons";
 import { withAuth } from "src/auth/withAuth";
-import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 import { useAuth } from "src/hooks/useAuth";
-
-export const getServerSideProps = withAuthGetServerSideProps();
 
 function Home() {
   const { loginWithGoogle } = useAuth();
