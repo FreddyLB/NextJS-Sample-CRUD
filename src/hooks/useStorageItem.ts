@@ -1,4 +1,4 @@
-import { isBrowser } from "@shared/utils/Utils";
+import { isBrowser } from "@shared/utils";
 import { useState } from "react";
 
 const EMPTY_STORAGE: Storage = Object.freeze({

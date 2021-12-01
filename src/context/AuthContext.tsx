@@ -4,7 +4,7 @@ import { createContext } from "react";
 import * as firebaseAuth from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import nookies from "nookies";
-import { isBrowser, isServer } from "@shared/utils/Utils";
+import { isServer, isBrowser } from "@shared/utils";
 import { useLocalStorageItem } from "src/hooks/useStorageItem";
 
 export type FirebaseUser = firebaseAuth.User;
@@ -26,7 +26,7 @@ export const AuthProvider: React.FC = ({ children }) => {
   const [isLoading, setIsLoading] = React.useState(!!isRedirecting.value);
 
   // To prevent NextJS to run client-side firebase on the server
-  if (!isBrowser()) {
+  if (isServer()) {
     return <AuthContext.Provider value={{} as any}>{children}</AuthContext.Provider>;
   }
 
