@@ -1,8 +1,7 @@
-import { model, Schema } from "mongoose";
-import * as Mongoose from "mongoose";
+import mongoose, { Types, Schema } from "mongoose";
 import { ProductDocument, ProductModel } from "./product.types";
 
-const ProductShema = new Schema(
+const productSchema = new Schema<ProductDocument, ProductModel>(
   {
     name: {
       type: String,
@@ -22,16 +21,17 @@ const ProductShema = new Schema(
       required: true,
       validate: (value: number) => value > 0,
     },
+    tags: [{ type: Types.ObjectId, ref: "Tag" }],
     createdAt: {
       type: Date,
       immutable: true,
       required: true,
-      default: () => Date.now(),
+      default: () => new Date(),
     },
     updatedAt: {
       type: Date,
       required: true,
-      default: () => Date.now(),
+      default: () => new Date(),
     },
   },
   {
@@ -43,7 +43,7 @@ const ProductShema = new Schema(
 );
 
 // Extensions
-ProductShema.set("toJSON", {
+productSchema.set("toJSON", {
   transform: (_doc, ret) => {
     ret.id = ret._id;
     delete ret._id;
@@ -52,7 +52,7 @@ ProductShema.set("toJSON", {
 });
 
 const Product: ProductModel =
-  Mongoose.models.Product ||
-  model<ProductDocument, ProductModel>("Product", ProductShema);
+  mongoose.models.Product ||
+  mongoose.model<ProductDocument, ProductModel>("Product", productSchema);
 
 export default Product;

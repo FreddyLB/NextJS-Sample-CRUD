@@ -5,4 +5,4 @@ export interface ProductDocument extends IProduct, Document {
     id: string;
 }
 
-export interface ProductModel extends Model<ProductDocument> {}
+export interface ProductModel extends Model<IProduct> {}
