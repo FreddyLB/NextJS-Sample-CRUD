@@ -7,4 +7,4 @@ export interface ProductDocument extends IProduct, Document {
     user: UserDocument;
 }
 
-export interface ProductModel extends Model<IProduct> {}
+export interface ProductModel extends Model<ProductDocument> {}

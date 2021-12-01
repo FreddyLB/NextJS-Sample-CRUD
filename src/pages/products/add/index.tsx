@@ -9,6 +9,10 @@ import { ProductApiClient } from "src/client/api/product.client";
 import { useRouter } from "next/router";
 import { withAuth } from "src/auth/withAuth";
 import { useAnimationsClases } from "src/hooks/useAnimations";
+import { AxiosInterceptors } from "src/client/api/interceptors";
+import { Loading } from "src/components/Loading";
+import { useAuth } from "src/hooks/useAuth";
+import ErrorPage from "src/pages/_error";
 
 const productClient = new ProductApiClient();
 
@@ -16,7 +20,16 @@ function AddProduct() {
   const classes = useCustomClasses();
   const animations = useAnimationsClases();
   const router = useRouter();
+  const auth = useAuth();
+  
+  if (auth.isLoading) {
+    return <Loading />;
+  }
 
+  if (auth.token) {
+    AxiosInterceptors.authBearerToken(productClient.client, auth.token);
+  }
+  
   return (
     <Container>
       <PageTitle variant="h4" color="white" title="Create Product" />

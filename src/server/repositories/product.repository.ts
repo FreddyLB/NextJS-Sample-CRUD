@@ -3,14 +3,12 @@ import {
   ProductDocument,
   ProductModel,
 } from "@server/database/mongodb/schemas/product.types";
+import { IProduct } from "@shared/models/product.model";
 import { FilterQuery } from "mongoose";
 import { MongoRepository } from "./base/mongo.repository";
 import { IRepository, PageResult, PaginationOptions } from "./base/repository";
 
-export type TodoPaginationOptions = Omit<
-  PaginationOptions<ProductDocument>,
-  "query"
-> & {
+export type TodoPaginationOptions = PaginationOptions<ProductDocument> & {
   search?: string;
 };
 
@@ -19,12 +17,12 @@ export interface ITodoRepository extends IRepository<ProductDocument> {
 }
 
 // prettier-ignore
-export class ProductRepository extends MongoRepository<ProductDocument, ProductModel> {
+export class ProductRepository extends MongoRepository<IProduct, ProductModel> {
   constructor() {
     super(Product);
   }
 
-  search(options: TodoPaginationOptions): Promise<PageResult<ProductDocument>> {
+  search(options: TodoPaginationOptions): Promise<PageResult<IProduct>> {
     if (options.search == null) {
       return this.findWithPagination(options);
     }

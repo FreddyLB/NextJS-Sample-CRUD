@@ -46,7 +46,7 @@ export interface RestApiConfig<
   onError?: ErrorHandler<Req, Res>;
   getAll?: RestEndpoint<TRepo, TEntity, PageResult<TEntity>, Req, Res> | null;
   getById?: RestEndpoint<TRepo, TEntity, TEntity | null, Req, Res> | null;
-  create?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;
+  create?: RestEndpoint<TRepo, TEntity, TEntity | TEntity[], Req, Res> | null;
   update?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;
   partialUpdate?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;
   delete?: RestEndpoint<TRepo, TEntity, TEntity, Req, Res> | null;

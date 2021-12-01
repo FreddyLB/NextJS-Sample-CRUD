@@ -17,6 +17,9 @@ import { SearchTextField } from "src/components/SearchTextField";
 import { useDebounce } from "src/hooks/useDebounce";
 import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 import ErrorPage from "../_error";
+import { AxiosInterceptors } from "src/client/api/interceptors";
+import { useAuth } from "src/hooks/useAuth";
+import { Loading } from "src/components/Loading";
 
 const useClasses = makeStyles(() => ({
   grid: {
@@ -33,19 +36,28 @@ type Data = {
   errorCode?: number;
 };
 
-export const getServerSideProps = withAuthGetServerSideProps<Data>(async () => {
-  try {
-    const result = await productClient.getAll();
-    return { props: { result } };
-  } catch (e: any) {
-    return {
-      props: {
-        result: EMPTY_PAGE_RESULT,
-        errorCode: e.response?.status,
-      },
-    };
+export const getServerSideProps = withAuthGetServerSideProps<Data>(
+  async (context) => {
+    try {
+      const { token } = context.req.cookies;
+
+      if (token) {
+        AxiosInterceptors.authBearerToken(productClient.client, token);
+      }
+
+      const result = await productClient.getAll();
+
+      return { props: { result } };
+    } catch (e: any) {
+      return {
+        props: {
+          result: EMPTY_PAGE_RESULT,
+          errorCode: e.response?.status,
+        },
+      };
+    }
   }
-});
+);
 
 function ListProducts({
   result,
@@ -54,6 +66,7 @@ function ListProducts({
   const [products, setProducts] = useState<IProduct[]>(result.data);
   const [search, setSearch] = useState("");
   const debouncedSearch = useDebounce(search, 300);
+  const auth = useAuth();
   const isFirstRender = useRef(true);
   const classes = useCustomClasses();
   const boxClasses = useClasses();
@@ -73,6 +86,14 @@ function ListProducts({
 
   if (errorCode) {
     return <ErrorPage statusCode={errorCode} />;
+  }
+
+  if (auth.isLoading) {
+    return <Loading />;
+  }
+
+  if (auth.token) {
+    AxiosInterceptors.authBearerToken(productClient.client, auth.token);
   }
 
   const CenterText = function CenterText() {

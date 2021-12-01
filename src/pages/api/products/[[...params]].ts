@@ -21,7 +21,46 @@ export default withRestApi<IProduct, ProductRepository, RequestWithUser>(
         options.search = String(req.query.search);
       }
 
-      return repo.search(options);
+      const user = req.user;
+      return repo.search({
+        ...options,
+        query: {
+          user,
+        },
+      });
+    },
+    getById: (repo, req) => {
+      const user = req.user;
+      const id = req.params.id;
+      return repo.findOne({ id, user });
+    },
+    create: (repo, req) => {
+      const user = req.user;
+      const data = req.body;
+
+      if (Array.isArray(data)) {
+        data.forEach((item) => (item.user = user));
+        return repo.createMany(data);
+      }
+
+      return repo.create({ ...data, user });
+    },
+    update: (repo, req) => {
+      const user = req.user;
+      const id = req.params.id;
+      const data = req.body;
+      return repo.update(id, { ...data, user });
+    },
+    partialUpdate: (repo, req) => {
+      const user = req.user;
+      const id = req.params.id;
+      const data = req.body;
+      return repo.partialUpdate(id, { ...data, user });
+    },
+    delete: (repo, req) => {
+      const user = req.user;
+      const id = req.params.id;
+      return repo.delete(id);
     },
     customEndpoints: {
       get: {
