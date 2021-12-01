@@ -1,6 +1,6 @@
 import { PageResult } from "@server/repositories/base/repository";
 import { Container, Box, Typography } from "@mui/material";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { InferGetServerSidePropsType } from "next";
 import { IProduct } from "src/shared/models/product.model";
 import { ProductApiClient } from "src/client/api/product.client";
 import AddIcon from "@mui/icons-material/Add";
