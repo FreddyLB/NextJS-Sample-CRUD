@@ -15,7 +15,12 @@ export class RestApiClient<T, TKey> {
     });
   }
 
-  async getAll(
+  async getAll(config: AxiosRequestConfig<T> = {}): Promise<PageResult<T>> {
+    const result = await this.client.get<PageResult<T>>(`/`, config);
+    return result.data;
+  }
+
+  async getAllQuery(
     options: QueryOptions = {},
     config: AxiosRequestConfig<T> = {}
   ): Promise<PageResult<T>> {

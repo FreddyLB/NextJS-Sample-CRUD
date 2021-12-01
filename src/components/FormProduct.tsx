@@ -8,7 +8,7 @@ import { checkIsImage } from "@shared/utils/checkIsImage";
 import { useAnimationsClases } from "src/hooks/useAnimations";
 import { ArrayUtils } from "@shared/utils/ArrayUtils";
 
-const delaysMs = ArrayUtils.range(1, 10).map((i) => i * 100);
+const delaysMs = ArrayUtils.range(1, 6).map((i) => i * 100);
 const delays = delaysMs.map((ms) => `${ms}ms !important`);
 
 const StyledTextField = styled(TextField)({
@@ -153,7 +153,8 @@ export function FormProduct({
           <Button
             type="submit"
             variant="contained"
-            className={classes.blackBtn}
+            sx={{ animationDelay: delays[5] }}
+            className={`${classes.blackBtn} ${animations.animateSlideLeftFadeIn}`}
           >
             {buttonText}
           </Button>

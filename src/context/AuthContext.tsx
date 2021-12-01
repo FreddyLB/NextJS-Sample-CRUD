@@ -1,11 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { getFirebaseApp } from "src/firebase/firebaseClient";
 import { createContext } from "react";
 import * as firebaseAuth from "firebase/auth";
 import { GoogleAuthProvider } from "firebase/auth";
 import nookies from "nookies";
 import { isServer, isBrowser } from "@shared/utils";
-import { useLocalStorageItem } from "src/hooks/useStorageItem";
 
 export type FirebaseUser = firebaseAuth.User;
 
@@ -21,20 +20,31 @@ export const AuthContext = createContext<AuthContextProps>(
 );
 
 export const AuthProvider: React.FC = ({ children }) => {
-  const [user, setUser] = React.useState<FirebaseUser | null>(null);
-  const isRedirecting = useLocalStorageItem("is-firebase-redirecting", false);
-  const [isLoading, setIsLoading] = React.useState(!!isRedirecting.value);
+  const [user, setUser] = useState<FirebaseUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   // To prevent NextJS to run client-side firebase on the server
   if (isServer()) {
-    return <AuthContext.Provider value={{} as any}>{children}</AuthContext.Provider>;
+    return (
+      <AuthContext.Provider value={{} as any}>{children}</AuthContext.Provider>
+    );
   }
 
   const googleProvider = new GoogleAuthProvider();
   const app = getFirebaseApp();
   const auth = firebaseAuth.getAuth(app);
 
-  auth.onAuthStateChanged((user) => setUser(user));
+  firebaseAuth.getRedirectResult(auth).then((credentials) => {
+    if (credentials) {
+      const user = credentials.user;
+      setUser(user);
+    }
+  });
+
+  auth.onAuthStateChanged((user) => {
+    setUser(user);
+    setIsLoading(false);
+  });
 
   auth.onIdTokenChanged(async (user) => {
     if (isBrowser()) {
@@ -47,33 +57,11 @@ export const AuthProvider: React.FC = ({ children }) => {
     }
   });
 
-  firebaseAuth.getRedirectResult(auth).then((credentials) => {
-    if (credentials) {
-      setUser(credentials.user);
-    }
-
-    if (isLoading) {
-      setIsLoading(false);
-    }
-  });
-
   const loginWithGoogle = () => {
-    setIsLoading(true);
-    isRedirecting.set(true);
-
     const loginAsync = async () => {
-      await firebaseAuth.signInWithRedirect(auth, googleProvider);
       try {
         await firebaseAuth.signInWithRedirect(auth, googleProvider);
-        const credentials = await firebaseAuth.getRedirectResult(auth);
-
-        if (credentials) {
-          const user = credentials.user;
-          setUser(user);
-        }
       } finally {
-        setIsLoading(false);
-        isRedirecting.remove();
       }
     };
 

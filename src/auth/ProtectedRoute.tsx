@@ -10,6 +10,10 @@ export const ProtectedRoute: React.FC = ({ children }) => {
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+
     let isMounted = true;
 
     const redirecting = (value: boolean) => {
@@ -22,9 +26,11 @@ export const ProtectedRoute: React.FC = ({ children }) => {
 
     const redirect = async () => {
       if (user == null && router.pathname !== LOGIN_URL) {
+        console.log("No Authenticated: ", isLoading)
         await router.replace(LOGIN_URL);
         redirecting(false);
       } else if (user != null && router.pathname === LOGIN_URL) {
+        console.log("Authenticated: ", isLoading)
         await router.replace(HOME_URL);
         redirecting(false);
       } else {

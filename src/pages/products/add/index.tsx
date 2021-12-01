@@ -8,17 +8,19 @@ import { FormProduct } from "src/components/FormProduct";
 import { ProductApiClient } from "src/client/api/product.client";
 import { useRouter } from "next/router";
 import { withAuth } from "src/auth/withAuth";
+import { useAnimationsClases } from "src/hooks/useAnimations";
 
 const productClient = new ProductApiClient();
 
 function AddProduct() {
   const classes = useCustomClasses();
+  const animations = useAnimationsClases();
   const router = useRouter();
 
   return (
     <Container>
       <PageTitle variant="h4" color="white" title="Create Product" />
-      <NavLink href="/products" className={classes.blackBtn} sx={{ margin: "20px 0" }}>
+      <NavLink href="/products" className={`${classes.blackBtn} ${animations.animateSlideLeftFadeIn}`} sx={{ margin: "20px 0" }}>
         <ArrowBackIcon />
         Back
       </NavLink>
