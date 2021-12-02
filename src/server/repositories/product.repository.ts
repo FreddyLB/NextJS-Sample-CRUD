@@ -28,13 +28,11 @@ export class ProductRepository extends MongoRepository<IProduct, ProductModel> {
     }
 
     const query: FilterQuery<ProductDocument> = {
-      $or: [
-        { name: { $regex: options.search, $options: "i" } },
-      ],
+      name: { $regex: options.search, $options: "i" }      
     };
 
     // SAFETY: Merge the search query with the existing query
-    const newOptions = { query, ...options };
+    const newOptions = { ...options, query };
     return this.findWithPagination(newOptions);
   }
 }

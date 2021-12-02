@@ -144,10 +144,7 @@ function ListProducts({
             variant="outlined"
             color="info"
             sx={{ color: "white" }}
-            onSearch={(term) => {
-              console.log(term);
-              setSearch(term);
-            }}
+            onSearch={(term) => setSearch(term)}
           />
         </Box>
       )}
