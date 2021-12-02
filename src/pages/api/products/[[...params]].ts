@@ -12,7 +12,7 @@ export default withRestApi<IProduct, ProductRepository, RequestWithUser>(
   {
     route: "/products",
     middlewares: [authMiddleware],
-    getAll: (repo, req) => {
+    getAll: async (repo, req) => {
       const options = buildPaginationOptions<IProduct>(
         req
       ) as TodoPaginationOptions;
@@ -22,17 +22,20 @@ export default withRestApi<IProduct, ProductRepository, RequestWithUser>(
       }
 
       const user = req.user;
-      return repo.search({
+      const result = await repo.search({
         ...options,
         query: {
           user,
         },
       });
+
+      return result;
     },
-    getById: (repo, req) => {
+    getById: async (repo, req) => {
       const user = req.user;
       const id = req.params.id;
-      return repo.findOne({ id, user });
+      const result = await repo.findOne({ id, user });
+      return result;
     },
     create: (repo, req) => {
       const user = req.user;

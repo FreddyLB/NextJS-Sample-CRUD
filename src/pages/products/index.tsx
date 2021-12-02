@@ -20,6 +20,7 @@ import ErrorPage from "../_error";
 import { AxiosInterceptors } from "src/client/api/interceptors";
 import { useAuth } from "src/hooks/useAuth";
 import { Loading } from "src/components/Loading";
+import { isBrowser } from "@shared/utils";
 
 const useClasses = makeStyles(() => ({
   grid: {
@@ -71,6 +72,11 @@ function ListProducts({
   const classes = useCustomClasses();
   const boxClasses = useClasses();
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -88,7 +94,7 @@ function ListProducts({
     return <ErrorPage statusCode={errorCode} />;
   }
 
-  if (auth.isLoading) {
+  if (mounted && auth.isLoading) {
     return <Loading />;
   }
 

@@ -71,9 +71,12 @@ export function ProductCard({ product, index }: ProductCardProps) {
           <Typography
             sx={{
               fontSize: 25,
-              paddingBottom: 2,
               fontWeight: "bold",
               color: "white",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              padding: "10px"
             }}
           >
             {product.name}

@@ -22,12 +22,13 @@ const productSchema = new Schema<ProductDocument, ProductModel>(
       validate: (value: number) => value > 0,
     },
     tags: {
-      type: [{ type: SchemaTypes.ObjectId, required: true }],
+      type: [{ type: SchemaTypes.ObjectId, required: true, ref: "Tag" }],
       default: [],
     },
     user: {
       type: SchemaTypes.ObjectId,
       required: true,
+      ref: "User",
     },
     createdAt: {
       type: Date,

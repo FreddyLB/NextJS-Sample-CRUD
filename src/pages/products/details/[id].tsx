@@ -10,7 +10,6 @@ import { IProduct } from "@shared/models/product.model";
 import { ProductDetails } from "src/components/ProductDetails";
 import { withAuthGetServerSideProps } from "src/auth/withAuthGetServerSideProps";
 import { AxiosInterceptors } from "src/client/api/interceptors";
-import { auth } from "firebase-admin";
 import { Loading } from "src/components/Loading";
 import ErrorPage from "src/pages/_error";
 import { useAuth } from "src/hooks/useAuth";

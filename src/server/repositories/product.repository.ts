@@ -19,7 +19,7 @@ export interface ITodoRepository extends IRepository<ProductDocument> {
 // prettier-ignore
 export class ProductRepository extends MongoRepository<IProduct, ProductModel> {
   constructor() {
-    super(Product);
+    super(Product, ["user"]);
   }
 
   search(options: TodoPaginationOptions): Promise<PageResult<IProduct>> {
@@ -34,7 +34,7 @@ export class ProductRepository extends MongoRepository<IProduct, ProductModel> {
     };
 
     // SAFETY: Merge the search query with the existing query
-    const newOptions = { ...options, query };
+    const newOptions = { query, ...options };
     return this.findWithPagination(newOptions);
   }
 }
