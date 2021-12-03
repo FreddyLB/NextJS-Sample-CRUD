@@ -2,12 +2,12 @@ import { HttpVerb, Middleware, ObjectType } from "./types";
 
 export interface ControllerMetadata {
   target: ObjectType<any>;
-  pattern?: string | RegExp;
+  // pattern?: string | RegExp;
 }
 
 export interface ControllerActionMetadata {
   target: ObjectType<any>;
-  pattern?: string;
+  pattern?: string | RegExp;
   method: HttpVerb;
   methodName: string;
 }

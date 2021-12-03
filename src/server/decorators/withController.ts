@@ -1,4 +1,5 @@
 import { NextApiResponse } from "next";
+import regexparam from "regexparam";
 import path from "path";
 import {
   ErrorHandler,
@@ -14,11 +15,16 @@ import { Path } from "path-parser";
 import { ObjectUtils } from "@shared/utils/ObjectUtils";
 
 interface RouteAction<Req, Res> {
-  path: Path;
+  path: RegExp;
   method: HttpVerb;
   handler: Handler<Req, Res>;
   middlewares: Middleware<Req, Res>[];
 }
+
+type RegexParamResult = {
+  keys: Array<string>;
+  pattern: RegExp;
+};
 
 function getBasePath() {
   const dirname = __dirname.split(path.sep);
@@ -49,7 +55,7 @@ export function withController<
   for (const action of actions) {
     const pattern = action.pattern || "/";
 
-    if (!pattern.startsWith("/")) {
+    if (!pattern.toString().startsWith("/")) {
       throw new Error(`Route pattern must start with "/": ${pattern}`);
     }
 
@@ -61,7 +67,8 @@ export function withController<
     const method = ObjectUtils.getValue<Handler<Req, Res>>(controller, action.methodName);
     const routes = routesMap.get(action.method);
     const routeAction = {
-      path: new Path(basePath + pattern),
+      // path: new Path(basePath + pattern),
+      path: regexparam(new RegExp(basePath + pattern)).pattern,
       method: action.method,
       handler: method,
       middlewares: routesMiddleware,
@@ -108,7 +115,7 @@ export function withController<
     }
 
     for (const route of routes) {
-      const match = route.path.test(url);
+      const match = exec(url, route.path);
 
       if (route.method !== req.method || !match) {
         continue;
@@ -171,4 +178,17 @@ function defaultErrorHandler<
   });
 
   next();
+}
+
+function exec(path: string, result: RegexParamResult) {
+  let i = 0;
+  let out: Record<string, string> = {};
+  let matches = result.pattern.exec(path)!;
+
+  while (i < result.keys.length) {
+    const key = result.keys[i];
+    out[key] = matches[++i];
+  }
+
+  return out;
 }
