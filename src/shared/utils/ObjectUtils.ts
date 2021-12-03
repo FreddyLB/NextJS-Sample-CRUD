@@ -12,4 +12,8 @@ export module ObjectUtils {
 
     return Object.assign({}, obj);
   }
+
+  export function getValue<T>(obj: any, key: string): T {
+    return obj[key];
+  }
 }

@@ -1,5 +1,4 @@
-export * from "./RouteController";
-export * from "./makeController";
+export * from "./withController";
 export * from "./metadata";
-export * from "./methods";
+export * from "./decorators";
 export * from "./types";
