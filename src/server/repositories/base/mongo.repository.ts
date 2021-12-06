@@ -8,7 +8,6 @@ import {
 import { Model, FilterQuery } from "mongoose";
 import { ValidationError } from "@server/utils/errors";
 
-
 const DEFAULT_MAX_PAGE_SIZE = 10;
 const NO_FOUND_ERROR_MESSAGE = "Resourse not found";
 
@@ -119,15 +118,30 @@ export abstract class MongoRepository<TEntity, TModel extends Model<TEntity>>
     return entityToUpdate;
   }
 
-  async delete(id: string): Promise<TEntity> {
-    const entityToDelete = await this.model.findById(id).populate(this.include);
+  async delete(entity: string | Partial<TEntity>): Promise<TEntity> {
+    if (typeof entity === "string") {
+      const entityToDelete = await this.model
+        .findById(entity)
+        .populate(this.include);
 
-    if (!entityToDelete) {
-      throw new ValidationError(NO_FOUND_ERROR_MESSAGE);
+      if (!entityToDelete) {
+        throw new ValidationError(NO_FOUND_ERROR_MESSAGE);
+      }
+
+      await entityToDelete.remove();
+      return entityToDelete;
+    } else {
+      const entityToDelete = await this.model
+        .findOne(entity)
+        .populate(this.include);
+
+      if (!entityToDelete) {
+        throw new ValidationError(NO_FOUND_ERROR_MESSAGE);
+      }
+
+      await entityToDelete.remove();
+      return entityToDelete;
     }
-
-    await entityToDelete.remove();
-    return entityToDelete;
   }
 }
 

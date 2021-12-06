@@ -52,7 +52,7 @@ export interface IWriteRepository<TEntity> {
   createMany(entities: Partial<TEntity>[]): Promise<TEntity[]>;
   update(id: string, entity: Partial<TEntity>): Promise<TEntity>;
   partialUpdate(id: string, entity: Partial<TEntity>): Promise<TEntity>;
-  delete(id: string | Partial<TEntity>): Promise<TEntity>;
+  delete(entity: string | Partial<TEntity>): Promise<TEntity>;
 }
 
 // prettier-ignore
