@@ -5,6 +5,7 @@ export const EMPTY_PAGE_RESULT: PageResult<any> = Object.freeze({
   pageSize: 0,
   totalPages: 0,
 });
+
 export interface PageResult<T> {
   data: T[];
   totalItems: number;
@@ -22,8 +23,12 @@ export type PageSorting<T> = {
   [P in keyof T]?: SortDirection;
 };
 
+// export type Query<T> = {
+//   [P in keyof T]?: any;
+// };
+
 export type Query<T> = {
-  [P in keyof T]?: any;
+  [P in keyof T]?: Query<T[P]>;
 };
 
 export interface PaginationOptions<T> {
@@ -47,7 +52,7 @@ export interface IWriteRepository<TEntity> {
   createMany(entities: Partial<TEntity>[]): Promise<TEntity[]>;
   update(id: string, entity: Partial<TEntity>): Promise<TEntity>;
   partialUpdate(id: string, entity: Partial<TEntity>): Promise<TEntity>;
-  delete(id: string): Promise<TEntity>;
+  delete(id: string | Partial<TEntity>): Promise<TEntity>;
 }
 
 // prettier-ignore

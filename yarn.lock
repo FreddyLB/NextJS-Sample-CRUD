@@ -2966,6 +2966,11 @@
     "call-bind" "^1.0.2"
     "get-intrinsic" "^1.1.1"
 
+"getdirname@^0.1.5":
+  "integrity" "sha512-QbeYKZKrzkmf3wUQyLP4uMVu2GTNdhKyRucATUSJqdH+PueEdLDdfSpKK8DYZzhTlMdzkNHDsAMKYf4pF+t5MQ=="
+  "resolved" "https://registry.npmjs.org/getdirname/-/getdirname-0.1.5.tgz"
+  "version" "0.1.5"
+
 "glob-parent@^5.1.2", "glob-parent@~5.1.0":
   "integrity" "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="
   "resolved" "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz"

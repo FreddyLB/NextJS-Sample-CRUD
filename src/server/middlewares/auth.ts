@@ -4,11 +4,14 @@ import { NextApiResponse } from "next";
 import { NextHandler } from "next-connect";
 import { IUser } from "@shared/models/user.model";
 import User from "@server/database/mongodb/schemas/user.schema";
+import { NextApiContext, Results } from "next-controllers";
 
 export type RequestWithUser = NextApiRequestWithParams & {
   user?: IUser;
   decodedIdToken?: firebaseAuth.DecodedIdToken;
 };
+
+export type ContextWithUser = NextApiContext<any, RequestWithUser>;
 
 export async function authMiddleware(
   req: RequestWithUser,
@@ -43,6 +46,6 @@ export async function authMiddleware(
     req.user = user ?? undefined;
     next();
   } catch {
-    return res.status(401).send("Unauthorized");
+    return Results.unauthorized();
   }
 }

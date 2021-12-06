@@ -2,10 +2,12 @@ import {
   IRepository,
   PageResult,
   PaginationOptions,
+  Query,
   SortDirection,
 } from "./repository";
 import { Model, FilterQuery } from "mongoose";
 import { ValidationError } from "@server/utils/errors";
+
 
 const DEFAULT_MAX_PAGE_SIZE = 10;
 const NO_FOUND_ERROR_MESSAGE = "Resourse not found";
@@ -60,12 +62,12 @@ export abstract class MongoRepository<TEntity, TModel extends Model<TEntity>>
     });
   }
 
-  async find(query: Partial<TEntity> = {}): Promise<TEntity[]> {
+  async find(query: Query<TEntity> = {}): Promise<TEntity[]> {
     const filterQuery = query as FilterQuery<TEntity>;
     return await this.model.find(filterQuery).populate(this.include);
   }
 
-  async findOne(query: Partial<TEntity> = {}): Promise<TEntity | null> {
+  async findOne(query: Query<TEntity> = {}): Promise<TEntity | null> {
     const filterQuery = query as FilterQuery<TEntity>;
     const result = await this.model.findOne(filterQuery).populate(this.include);
     return result;
@@ -76,17 +78,17 @@ export abstract class MongoRepository<TEntity, TModel extends Model<TEntity>>
     return result;
   }
 
-  async create(entity: Partial<TEntity>): Promise<TEntity> {
+  async create(entity: Query<TEntity>): Promise<TEntity> {
     const result = await this.model.create(entity);
     return result;
   }
 
-  async createMany(entities: Partial<TEntity>[]): Promise<TEntity[]> {
+  async createMany(entities: Query<TEntity>[]): Promise<TEntity[]> {
     const result = await this.model.create(entities);
     return result;
   }
 
-  async update(id: string, entity: Partial<TEntity>): Promise<TEntity> {
+  async update(id: string, entity: Query<TEntity>): Promise<TEntity> {
     let entityToUpdate = await this.model.findById(id);
 
     if (!entityToUpdate) {
@@ -98,7 +100,7 @@ export abstract class MongoRepository<TEntity, TModel extends Model<TEntity>>
     return entityToUpdate;
   }
 
-  async partialUpdate(id: string, entity: Partial<TEntity>): Promise<TEntity> {
+  async partialUpdate(id: string, entity: Query<TEntity>): Promise<TEntity> {
     const entityToUpdate = await this.model.findById(id).populate(this.include);
 
     if (!entityToUpdate) {
@@ -109,7 +111,7 @@ export abstract class MongoRepository<TEntity, TModel extends Model<TEntity>>
       const value = entity[key];
 
       if (value !== undefined) {
-        (entityToUpdate as Partial<TEntity>)[key] = value;
+        (entityToUpdate as Query<TEntity>)[key] = value;
       }
     }
 
