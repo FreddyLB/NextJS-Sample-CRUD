@@ -3,6 +3,7 @@ module.exports = {
   reactStrictMode: true,
   webpack5: true,
   webpack: (config) => {
+    config.node = { __dirname: false };
     config.resolve.fallback = {
       fs: false,
       stream: false,
