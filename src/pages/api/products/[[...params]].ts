@@ -18,14 +18,9 @@ import {
   withController,
 } from "next-controllers";
 
-@UseMiddleware(authMiddleware)
+// @UseMiddleware(authMiddleware)
 class ProductsController extends BaseController {
   private readonly products = new ProductRepository();
-
-  @Get("/hello")
-  sayHello() {
-    return "Hello";
-  }
 
   @Get()
   async getAll({ request }: ContextWithUser): Promise<PageResult<IProduct>> {
