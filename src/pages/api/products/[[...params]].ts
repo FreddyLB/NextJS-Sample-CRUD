@@ -12,11 +12,11 @@ import {
   Delete,
   Get,
   Patch,
+  Put,
   Post,
   UseMiddleware,
   withController,
 } from "next-controllers";
-import Put from "next-controllers/lib/decorators/Put";
 
 @UseMiddleware(authMiddleware)
 class ProductsController extends BaseController {

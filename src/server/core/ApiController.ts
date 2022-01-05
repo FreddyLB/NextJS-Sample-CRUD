@@ -12,11 +12,11 @@ import {
   UseMiddleware,
   Get,
   Post,
+  Put,
   Patch,
   Delete,
   OnError,
 } from "next-controllers";
-import Put from "next-controllers/lib/decorators/Put";
 
 @UseMiddleware(morgan("dev"))
 @UseMiddleware(mongodb())

@@ -4,7 +4,7 @@ import { NextApiResponse } from "next";
 import { NextHandler } from "next-connect";
 import { IUser } from "@shared/models/user.model";
 import User from "@server/database/mongodb/schemas/user.schema";
-import { NextApiContext, Results } from "next-controllers";
+import { NextApiContext } from "next-controllers";
 
 export type RequestWithUser = NextApiRequestWithParams & {
   user?: IUser;
@@ -46,6 +46,6 @@ export async function authMiddleware(
     req.user = user ?? undefined;
     next();
   } catch {
-    return Results.unauthorized();
+    res.status(401).send("Unauthorized");
   }
 }
